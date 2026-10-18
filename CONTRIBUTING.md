@@ -41,4 +41,4 @@ Issues move across the project board: **Backlog → Ready → In progress → Re
 
 ## Definition of Done
 
-A change is done when the Issue's acceptance criteria are met, the PR is merged, and the checklist in [`AGENTS.md` §20](AGENTS.md) holds where it applies (tests, docs, security checks, no unrelated changes).
+A change is done when the Issue's acceptance criteria are met, the PR is merged, and the checklist under **Definition of Done** in [`AGENTS.md`](AGENTS.md) holds where it applies (tests, docs, security checks, no unrelated changes).
