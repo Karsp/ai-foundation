@@ -475,6 +475,19 @@ What actions are forbidden?
 
 Use least privilege.
 
+If the product itself uses an LLM or agent (not only for development), also determine:
+
+```text
+Which inputs are untrusted (users, documents, web, emails, tool output)?
+Which sensitive data or systems can the model reach?
+Which actions can it take (write data, send messages, call APIs)?
+Which features combine all three (Rule of Two), and where does a human confirm?
+How is model output validated before it is executed, rendered or stored?
+What is logged, and how are prompts and outputs kept free of secrets?
+```
+
+Use the OWASP Top 10 for Agentic Applications (ASI01 to ASI10) as the checklist (`docs/security/threat-model.md` once it exists).
+
 ---
 
 # 17. AI Agent Architecture
@@ -492,6 +505,8 @@ If AI agents are part of the project, decide whether the project needs:
 - agent memory;
 - approval gates;
 - execution sandboxing.
+
+If agents keep persistent memory, decide what may be stored, who reviews it, and how it is reset. Memory must not hold secrets or instructions copied from untrusted sources.
 
 Separate:
 
