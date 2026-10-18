@@ -80,6 +80,17 @@ Determine:
 
 Avoid rewriting existing functionality simply because a different implementation would be preferable.
 
+When sources disagree, trust them in this order:
+
+1. current repository state;
+2. GitHub Issues and Pull Requests;
+3. architecture documentation and ADRs;
+4. CI/test results;
+5. project configuration;
+6. agent conversation context (the least durable).
+
+If the conversation contradicts the repository, investigate before proceeding.
+
 ---
 
 # 4. Stage 3: Inspect GitHub
@@ -122,19 +133,35 @@ What risks exist?
 
 If the Issue is insufficiently defined, improve it when permitted or request clarification.
 
+Do not create vague placeholder Issues such as:
+
+```text
+"Implement authentication"
+"Fix API"
+"Improve architecture"
+```
+
+An Issue must contain enough information for another engineer or agent to understand and implement it without the original conversation.
+
 ---
 
 # 6. Stage 5: Branch
 
 Create a branch associated with the Issue.
 
-Example:
+Naming:
 
 ```text
-feature/123-add-user-search
+feature/<issue-number>-<short-description>
+bugfix/<issue-number>-<short-description>
+refactor/<issue-number>-<short-description>
+chore/<issue-number>-<short-description>
+docs/<issue-number>-<short-description>
 ```
 
-Keep work isolated to the Issue.
+Example: `feature/123-add-user-search`.
+
+Keep work isolated to the Issue. Do not commit implementation work directly to the default branch.
 
 ---
 
@@ -157,6 +184,8 @@ For complex tasks, identify:
 
 If the implementation reveals that the Issue is incorrectly scoped, stop and restructure the work rather than silently expanding scope.
 
+Aim for the smallest reasonable implementation. For complex work, record the plan in the Issue. Do not produce elaborate plans for trivial changes.
+
 ---
 
 # 8. Stage 7: Implement
@@ -174,6 +203,8 @@ Prefer:
 * reversible decisions.
 
 Avoid unrelated cleanup.
+
+Do not perform opportunistic refactors merely because you noticed something that could be improved. If unrelated work is important, create or propose a separate Issue.
 
 ---
 
@@ -194,6 +225,18 @@ Consider:
 * compatibility.
 
 Do not equate test quantity with quality.
+
+Every implementation includes appropriate tests unless there is a documented reason why testing is not applicable.
+
+Never:
+
+* remove tests merely to make CI pass;
+* weaken assertions without justification;
+* disable quality gates;
+* hide failures;
+* claim tests passed without running them.
+
+If a test cannot be executed, state that explicitly.
 
 ---
 
@@ -228,6 +271,15 @@ BLOCKED
 
 Never convert `NOT RUN` into `PASS`.
 
+The commands documented in the repository (see `AGENTS.md`) are authoritative. Do not invent alternative workflows.
+
+If a command fails:
+
+1. determine whether the failure is caused by your change;
+2. fix it when it is within scope;
+3. document unrelated failures;
+4. never conceal the failure.
+
 ---
 
 # 11. Stage 10: Document
@@ -246,6 +298,8 @@ Document:
 
 The implementation should leave the repository more understandable, not less.
 
+Do not create documentation that merely repeats the implementation. Documentation should answer the questions future developers or agents are likely to have.
+
 ---
 
 # 12. Stage 11: Pull Request
@@ -262,6 +316,8 @@ The PR must:
 * identify follow-up work.
 
 The PR should allow a reviewer to understand the change without relying on private agent context.
+
+Do not create a PR merely to make the workflow appear complete. The PR must represent the actual state of the implementation, and must declare AI assistance as the PR template asks.
 
 ---
 
@@ -361,6 +417,8 @@ If necessary, create a follow-up Issue.
 
 Failed attempts are useful engineering information when recorded correctly.
 
+Preserve working changes (commit them to the branch, never discard them silently) and update the Issue/PR with the state above.
+
 ---
 
 # 19. Interrupted Work
@@ -384,6 +442,8 @@ Next recommended action
 
 The handoff must not depend on remembering the previous conversation.
 
+Use the template in [`handoff.md`](handoff.md). Create follow-up Issues for remaining work, defined well enough for another agent to continue.
+
 ---
 
 # 20. Architecture Escalation
@@ -401,6 +461,17 @@ If implementation requires a decision that changes:
 the agent must treat it as an architectural decision.
 
 Consult relevant ADRs and create a new ADR when appropriate.
+
+Before changing architecture:
+
+1. read the relevant architecture documentation;
+2. inspect existing ADRs and check whether one already applies;
+3. evaluate alternatives;
+4. record the decision in an ADR when appropriate;
+5. create or update the relevant Issue;
+6. implement through the normal branch/PR workflow.
+
+Architecture decisions must remain understandable after the original agent is gone.
 
 ---
 
