@@ -149,6 +149,7 @@ Unless explicitly changed by the project owner:
 | Update Issue                                  | Allowed                                         |
 | Modify documentation                          | Allowed                                         |
 | Modify application code                       | Allowed within Issue scope                      |
+| Add or upgrade a dependency                   | Requires approval                               |
 | Modify CI                                     | Requires review                                 |
 | Modify security controls                      | Requires approval                               |
 | Modify production configuration               | Requires approval                               |
@@ -424,28 +425,31 @@ Changes to this file should normally:
 
 # 19. Current Project Configuration
 
-The following values should be explicitly configured by the project owner:
+Set by the project owner on 2026-10-18 (see [ADR-0002](../decisions/ADR-0002-default-autonomy-level-2.md)). Projects created from this template inherit these values and record any change in their own ADR.
 
 ```text
-Default agent autonomy level: [SET]
-Issue creation: [ALLOW / REQUIRE APPROVAL]
-Branch creation: [ALLOW / REQUIRE APPROVAL]
-Commit creation: [ALLOW / REQUIRE APPROVAL]
-Push feature branches: [ALLOW / REQUIRE APPROVAL]
-PR creation: [ALLOW / REQUIRE APPROVAL]
-CI modification: [ALLOW / REQUIRE APPROVAL]
-PR merge: [ALLOW / REQUIRE APPROVAL]
-Release creation: [ALLOW / REQUIRE APPROVAL]
-Deployment: [ALLOW / REQUIRE APPROVAL]
-Production access: [DENY / APPROVAL / ALLOW]
-Infrastructure changes: [DENY / APPROVAL / ALLOW]
-Database migrations: [DENY / APPROVAL / ALLOW]
-External service actions: [DENY / APPROVAL / ALLOW]
+Default agent autonomy level: 2 (Repository Contribution)
+Issue creation: ALLOW
+Branch creation: ALLOW
+Commit creation: ALLOW
+Push feature branches: ALLOW
+PR creation: ALLOW (draft or ready for review)
+Add or upgrade dependencies: REQUIRE APPROVAL
+Handle secrets or credentials: REQUIRE APPROVAL
+CI modification: REQUIRE APPROVAL
+Agent rules, autonomy or security controls: REQUIRE APPROVAL
+PR merge: REQUIRE APPROVAL
+Release creation: REQUIRE APPROVAL
+Deployment: REQUIRE APPROVAL
+Production access: DENY
+Infrastructure changes: DENY
+Database migrations: APPROVAL
+External service actions: DENY (read-only lookups needed for the Issue are allowed)
 ```
 
-These values are intentionally left explicit.
+"REQUIRE APPROVAL" means the owner says yes for that specific action, in the Issue, the PR or the conversation. Approval for one action does not carry over to the next.
 
-**The project owner must decide them.**
+Agents always run in an isolated environment (WSL2 or a dev container), never directly on a native Windows host. See [ADR-0004](../decisions/ADR-0004-agents-run-in-isolated-environment.md).
 
 ---
 
