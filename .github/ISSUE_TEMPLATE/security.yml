@@ -1,0 +1,47 @@
+name: Security hardening
+description: A planned security improvement (not a vulnerability report; report those privately).
+title: "security: "
+labels: ["security"]
+body:
+  - type: markdown
+    attributes:
+      value: "**Found a vulnerability?** Do not describe it here. Use private vulnerability reporting (see SECURITY.md). This form is for planned hardening work only."
+  - type: textarea
+    id: risk
+    attributes:
+      label: Risk addressed
+      description: The threat and, where it fits, the OWASP Agentic Top 10 ID (ASI01 to ASI10).
+    validations:
+      required: true
+  - type: textarea
+    id: control
+    attributes:
+      label: Proposed control
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope and affected files or settings
+    validations:
+      required: true
+  - type: dropdown
+    id: approval
+    attributes:
+      label: Does this change agent permissions or security boundaries?
+      options:
+        - "No"
+        - "Yes: needs owner approval (docs/agents/autonomy.md)"
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: How we verify the control works (e.g. "Given an agent reads .env, then it is denied").
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: References
