@@ -1,0 +1,29 @@
+name: Task
+description: Maintenance, documentation, tooling or harness work.
+title: "chore: "
+labels: ["chore"]
+body:
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+    validations:
+      required: true
+  - type: textarea
+    id: work
+    attributes:
+      label: Work to do
+      description: A checklist of concrete steps.
+      placeholder: "- [ ] "
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies

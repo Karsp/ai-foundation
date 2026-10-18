@@ -1,0 +1,76 @@
+name: Feature
+description: New capability or improvement, defined well enough for a human or agent to implement without the original conversation.
+title: "feat: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Why this matters now. Link related Issues, ADRs or docs.
+    validations:
+      required: true
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective
+      description: The outcome in one or two sentences.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: What is included. Use a list.
+    validations:
+      required: true
+  - type: textarea
+    id: non-goals
+    attributes:
+      label: Non-goals
+      description: What is explicitly out of scope.
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Testable criteria, ideally Given / When / Then.
+      placeholder: |
+        - Given ...
+          When ...
+          Then ...
+    validations:
+      required: true
+  - type: textarea
+    id: technical
+    attributes:
+      label: Technical considerations
+      description: Affected components, architecture impact, constraints.
+  - type: textarea
+    id: security
+    attributes:
+      label: Security considerations
+      description: Secrets, untrusted input, new dependencies, permissions, data. Write "None" if none.
+    validations:
+      required: true
+  - type: textarea
+    id: testing
+    attributes:
+      label: Testing requirements
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Issues that must land first (e.g. "#12").
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks and open questions
+  - type: checkboxes
+    id: dod
+    attributes:
+      label: Definition of Done
+      options:
+        - label: Acceptance criteria met and verified
+        - label: Tests added or a reason documented
+        - label: Docs and ADRs updated where behaviour or decisions changed
+        - label: Delivered through a PR that closes this Issue
