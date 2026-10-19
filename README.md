@@ -31,7 +31,7 @@ Coming next (see Issues): security policy and threat model, supply-chain and MCP
 ## Start a new project from this template
 
 1. On GitHub, click **Use this template** and create the new repository (private to start).
-2. Apply the GitHub settings checklist in [Issue #2](https://github.com/Karsp/ai-foundation/issues/2): secret scanning and push protection, Dependabot, private vulnerability reporting, a rule that `main` needs a PR, squash merges with the PR title as message.
+2. Apply the [GitHub setup checklist](docs/development/github-setup.md) and run its two checks: secret scanning and push protection, Dependabot, private vulnerability reporting, a rule that `main` needs a PR, squash merges with the PR title as message.
 3. Open a session with your agent and paste [`MASTER_PROMPT.md`](MASTER_PROMPT.md). Ask it to work through [`docs/PROJECT_ARCHITECTURE_GUIDE.md`](docs/PROJECT_ARCHITECTURE_GUIDE.md) and record the answers as ADRs in a PR.
 4. Review `docs/agents/autonomy.md` §19 and change it only through an ADR.
 5. Let the agent write the first Issues, then work them one PR at a time.
