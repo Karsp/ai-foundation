@@ -84,7 +84,7 @@ Review of the OpenCode / Gentle-AI setup guide used for this foundation (October
 | Gentle-AI via `curl … gentle-ai/main/scripts/install.sh \| bash` | Script from the moving `main` branch | Download from a tagged release, read it, check its SHA-256, then run the file |
 | `npm install -g @colbymchenry/codegraph@latest` | `@latest` installs whatever was published last, even minutes ago | Run the package checks, then pin `@colbymchenry/codegraph@<version>` |
 
-The agent adapters ([#11](https://github.com/Karsp/ai-foundation/issues/11)) and the dev container ([#13](https://github.com/Karsp/ai-foundation/issues/13)) apply these fixes when they add install steps.
+The [environment guide](../development/environment.md) and the dev container apply these fixes: exact versions from npm and pipx, and the Ubuntu archive for everything else.
 
 ## GitHub Actions
 

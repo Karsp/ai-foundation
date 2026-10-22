@@ -18,7 +18,8 @@
       "opencode.json": "ask",
       ".mcp.json": "ask",
       ".claude/*": "ask",
-      ".github/workflows/*": "ask"
+      ".github/workflows/*": "ask",
+      ".devcontainer/*": "ask"
     },
     "shell": {
       "*": "ask",

@@ -16,6 +16,15 @@ updates:
         patterns: ["*"]
     labels: ["dependencies", "security"]
 
+  # Dev container base image (the digest in .devcontainer/Dockerfile)
+  - package-ecosystem: "docker"
+    directory: "/.devcontainer"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 3
+    labels: ["dependencies", "security"]
+
   # - package-ecosystem: "npm"
   #   directory: "/"
   #   schedule:
