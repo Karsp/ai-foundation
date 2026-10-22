@@ -8,7 +8,7 @@ Humans and AI agents follow the same flow. Agents also follow [`AGENTS.md`](AGEN
 Issue → branch → commits → PR (Closes #N) → review → squash merge → Issue closes
 ```
 
-1. **Find or open an Issue.** Use one of the forms (Feature, Bug, Task, Security hardening). It needs clear acceptance criteria before work starts. Vulnerabilities are reported privately, never in an Issue (see `SECURITY.md` once it exists).
+1. **Find or open an Issue.** Use one of the forms (Feature, Bug, Task, Security hardening). It needs clear acceptance criteria before work starts. Vulnerabilities are reported privately, never in an Issue (see [`SECURITY.md`](SECURITY.md)).
 2. **Create a branch** from `main`:
    `feature/<issue>-<short-name>`, `bugfix/…`, `refactor/…`, `chore/…`, `docs/…`
 3. **Commit** small, focused changes. Messages start with a type: `feat:`, `fix:`, `docs:`, `chore:`, `refactor:`, `test:`, `security:`, and mention the Issue, e.g. `docs: add MCP policy (#10)`.

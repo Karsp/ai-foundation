@@ -486,7 +486,7 @@ How is model output validated before it is executed, rendered or stored?
 What is logged, and how are prompts and outputs kept free of secrets?
 ```
 
-Use the OWASP Top 10 for Agentic Applications (ASI01 to ASI10) as the checklist (`docs/security/threat-model.md` once it exists).
+Use the OWASP Top 10 for Agentic Applications (ASI01 to ASI10) as the checklist: start from [`docs/security/threat-model.md`](security/threat-model.md) and its section for products that embed an LLM.
 
 ---
 
