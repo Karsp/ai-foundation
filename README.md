@@ -16,8 +16,10 @@ A reusable, model-agnostic foundation for building software with AI agents **saf
 | Decision records | [`docs/decisions/`](docs/decisions/) |
 | Issue forms and PR template | [`.github/`](.github/) |
 | How to contribute and review | [`CONTRIBUTING.md`](CONTRIBUTING.md) |
+| How to report vulnerabilities, and what to do if a secret leaks | [`SECURITY.md`](SECURITY.md) |
+| Agent risks (OWASP ASI01 to ASI10) and the controls that cover them | [`docs/security/threat-model.md`](docs/security/threat-model.md) |
 
-Coming next (see Issues): security policy and threat model, supply-chain and MCP policies, safe agent settings for Claude Code and OpenCode, secret scanning, a dev container, CI, starter skills.
+Coming next (see Issues): supply-chain and MCP policies, safe agent settings for Claude Code and OpenCode, secret scanning, a dev container, CI, starter skills.
 
 ## Core rules in one minute
 
@@ -45,6 +47,8 @@ docs/
   architecture/     system architecture (filled per project)
   decisions/        ADRs
   development/      contributor docs (labels, setup)
+  security/         threat model
 AGENTS.md           entry point for every agent
 MASTER_PROMPT.md    prompt to bootstrap a new project
+SECURITY.md         vulnerability reporting and secret-exposure steps
 ```
