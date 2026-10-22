@@ -1,5 +1,9 @@
 # Gentleman Guardian Angel Configuration
-# https://github.com/your-org/gga
+# https://github.com/Gentleman-Programming/gentleman-guardian-angel
+#
+# GGA is an extra AI reviewer that runs before a commit. It is not the only
+# review: CI checks and the owner's review of every PR still apply
+# (docs/agents/adapters/README.md).
 
 # AI Provider (required)
 # Options: claude, gemini, codex, opencode, cursor[:model], kilo[:model], kiro, ollama:<model>, lmstudio[:model], github:<model>, minimax[:model]
@@ -30,14 +34,16 @@ PROVIDER="opencode"
 #   FILE_PATTERNS="*.ts,*.tsx"
 #   FILE_PATTERNS="*.py"
 #   FILE_PATTERNS="*.go,*.mod"
-FILE_PATTERNS="*.ts,*.tsx,*.js,*.jsx"
+# Per-project setting: set it to the project's source files.
+# FILE_PATTERNS="*.ts,*.tsx,*.js,*.jsx"
 
 # File patterns to exclude from review (comma-separated)
 # Default: none
 # Examples:
 #   EXCLUDE_PATTERNS="*.test.ts,*.spec.ts"
 #   EXCLUDE_PATTERNS="*_test.go,*.mock.ts"
-EXCLUDE_PATTERNS="*.test.ts,*.spec.ts,*.test.tsx,*.spec.tsx,*.d.ts"
+# Per-project setting.
+# EXCLUDE_PATTERNS="*.test.ts,*.spec.ts,*.test.tsx,*.spec.tsx,*.d.ts"
 
 # File containing code review rules
 # Default: AGENTS.md

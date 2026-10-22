@@ -8,6 +8,7 @@ This repository is developed by humans and AI agents. This file is the entry poi
 | [`docs/agents/agent-contract.md`](docs/agents/agent-contract.md) | The step-by-step lifecycle for every task |
 | [`docs/agents/autonomy.md`](docs/agents/autonomy.md) | What you may do alone, with approval, or never |
 | [`docs/agents/handoff.md`](docs/agents/handoff.md) | How to leave work so another agent can continue |
+| [`docs/agents/adapters/`](docs/agents/adapters/README.md) | Which files each agent reads, and the settings that enforce these rules |
 | [`docs/decisions/`](docs/decisions/) | ADRs: decisions already made, and why |
 
 These documents are authoritative. If they conflict, stop and ask rather than guess.
