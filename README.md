@@ -11,6 +11,7 @@ A reusable, model-agnostic foundation for building software with AI agents **saf
 | Bootstrap prompt for a new project | [`MASTER_PROMPT.md`](MASTER_PROMPT.md) |
 | Entry point every agent reads | [`AGENTS.md`](AGENTS.md) |
 | Decisions each project must make | [`docs/PROJECT_ARCHITECTURE_GUIDE.md`](docs/PROJECT_ARCHITECTURE_GUIDE.md) |
+| Which files each agent reads, and the settings that enforce the rules | [`CLAUDE.md`](CLAUDE.md), [`.claude/settings.json`](.claude/settings.json), [`opencode.json`](opencode.json), [`docs/agents/adapters/`](docs/agents/adapters/README.md) |
 | How an agent works through an Issue | [`docs/agents/agent-contract.md`](docs/agents/agent-contract.md) |
 | What agents may do alone, with approval, or never | [`docs/agents/autonomy.md`](docs/agents/autonomy.md) |
 | Decision records | [`docs/decisions/`](docs/decisions/) |
@@ -21,7 +22,7 @@ A reusable, model-agnostic foundation for building software with AI agents **saf
 | Rules for adding packages, installers and Actions | [`docs/security/supply-chain.md`](docs/security/supply-chain.md), [`.github/dependabot.yml`](.github/dependabot.yml) |
 | Approved MCP servers and how to add one | [`docs/security/mcp-policy.md`](docs/security/mcp-policy.md), [`.mcp.json`](.mcp.json) |
 
-Coming next (see Issues): safe agent settings for Claude Code and OpenCode, secret scanning, a dev container, CI, starter skills.
+Coming next (see Issues): secret scanning, a dev container, CI, starter skills.
 
 ## Core rules in one minute
 
@@ -45,13 +46,16 @@ Coming next (see Issues): safe agent settings for Claude Code and OpenCode, secr
 ```text
 .github/            Issue forms, PR template, Dependabot config
 docs/
-  agents/           agent contract and autonomy policy
+  agents/           agent contract, autonomy policy, adapters
   architecture/     system architecture (filled per project)
   decisions/        ADRs
   development/      contributor docs (labels, setup)
   security/         threat model, supply-chain and MCP policies
+.claude/            Claude Code permissions and sandbox
 .mcp.json           MCP servers (empty; see the MCP policy)
 AGENTS.md           entry point for every agent
+CLAUDE.md           Claude Code adapter (imports AGENTS.md)
 MASTER_PROMPT.md    prompt to bootstrap a new project
 SECURITY.md         vulnerability reporting and secret-exposure steps
+opencode.json       OpenCode permissions
 ```
