@@ -20,8 +20,9 @@ A reusable, model-agnostic foundation for building software with AI agents **saf
 | How to report vulnerabilities, and what to do if a secret leaks | [`SECURITY.md`](SECURITY.md) |
 | Agent risks (OWASP ASI01 to ASI10) and the controls that cover them | [`docs/security/threat-model.md`](docs/security/threat-model.md) |
 | Rules for adding packages, installers and Actions | [`docs/security/supply-chain.md`](docs/security/supply-chain.md), [`.github/dependabot.yml`](.github/dependabot.yml) |
+| Approved MCP servers and how to add one | [`docs/security/mcp-policy.md`](docs/security/mcp-policy.md), [`.mcp.json`](.mcp.json) |
 
-Coming next (see Issues): MCP policy, secret scanning, a dev container, CI, starter skills.
+Coming next (see Issues): secret scanning, a dev container, CI, starter skills.
 
 ## Core rules in one minute
 
@@ -49,10 +50,12 @@ docs/
   architecture/     system architecture (filled per project)
   decisions/        ADRs
   development/      contributor docs (labels, setup)
-  security/         threat model, supply-chain policy
+  security/         threat model, supply-chain and MCP policies
+.claude/            Claude Code permissions and sandbox
+.mcp.json           MCP servers (empty; see the MCP policy)
 AGENTS.md           entry point for every agent
+CLAUDE.md           Claude Code adapter (imports AGENTS.md)
 MASTER_PROMPT.md    prompt to bootstrap a new project
 SECURITY.md         vulnerability reporting and secret-exposure steps
-CLAUDE.md           Claude Code adapter (imports AGENTS.md; settings in .claude/)
 opencode.json       OpenCode permissions
 ```
