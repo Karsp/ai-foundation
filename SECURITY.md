@@ -13,7 +13,12 @@ Please include:
 - what an attacker gains (for example: an agent skips an approval, a secret leaks, untrusted content gets executed);
 - a suggested fix, if you have one.
 
-This project is maintained by one person. Replies are best effort. Please do not disclose the issue publicly until a fix is published or we agree on a date.
+This project is maintained by one person. What to expect:
+
+- **Within 7 days:** an acknowledgement that the report was received.
+- **Within 30 days:** a fix, or a plan with a date if the fix takes longer.
+
+Please do not disclose the issue publicly until a fix is published or we agree on a date.
 
 ## What is in scope
 
