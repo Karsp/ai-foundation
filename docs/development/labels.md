@@ -9,6 +9,7 @@
 | `governance` | Changes agent rules or autonomy; needs owner approval |
 | `needs-owner` | Only the repository owner can do it (settings, approvals) |
 | `chore` | Repository maintenance |
+| `dependencies` | Dependency or GitHub Action update (Dependabot uses it); needs owner approval |
 | `enhancement`, `bug`, `documentation` | GitHub defaults, used by the Issue forms |
 
 ## Board
