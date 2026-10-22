@@ -23,6 +23,7 @@ Personal overrides go in files that are not committed (`.claude/settings.local.j
 | No destructive actions without approval (§5) | `deny` `git push --force`/`-f`, `rm -rf`, `sudo`, and bare `sh`/`bash`/`zsh` (blocks `curl … \| sh`) | `shell` deny the same patterns, including `* \| sh` and `* \| bash` |
 | Dependencies need approval ([supply chain](../../security/supply-chain.md)) | `ask` for `npm install/i/add/update`, `npx`, `pnpm add/install/update`, `yarn add`, `pip install`, `uv add`, `uv pip install`, `uvx`, `curl`, `wget` | `shell` ask by default; installs explicitly `ask` |
 | Agent rules and CI change only with approval (§5, §6) | `ask` before editing `AGENTS.md`, `CLAUDE.md`, `.claude/**`, `opencode.json`, `.mcp.json`, `.github/workflows/**` | `edit` ask for the same files |
+| Never skip the secret scan ([secrets](../../security/secrets.md)) | `deny` `git commit --no-verify`/`-n` and `git push --no-verify` | `shell` deny the same patterns |
 | Run isolated ([ADR-0004](../../decisions/ADR-0004-agents-run-in-isolated-environment.md)) | `sandbox.enabled` with `failIfUnavailable`: Claude Code refuses to start without a working sandbox; `allowUnsandboxedCommands: false`; network limited to GitHub, npm and PyPI | No built-in sandbox: run OpenCode inside WSL2 or the dev container ([#13](https://github.com/Karsp/ai-foundation/issues/13)) |
 | MCP servers only from the approved list ([MCP policy](../../security/mcp-policy.md)) | `enableAllProjectMcpServers: false`: each server in `.mcp.json` needs approval | Servers only in `opencode.json` → `mcp`, through a PR |
 | No bypass | `disableBypassPermissionsMode: "disable"` | n/a |
@@ -45,6 +46,7 @@ Run these in a throwaway folder with a fake `.env` (for example `API_KEY=fake`),
 | Ask it to run `cat .env` | "Permission to use Bash with command cat .env has been denied" |
 | Ask it to read `.env.example` | It shows the file |
 | Ask it to run `git push --force origin main` | Denied |
+| Ask it to run `git commit --no-verify -m test` | Denied |
 | Start Claude Code where `bubblewrap` is missing | "sandbox required but unavailable … refusing to start" |
 | Run `opencode debug config` | The `permission` block appears as written |
 
