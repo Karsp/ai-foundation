@@ -18,8 +18,9 @@ A reusable, model-agnostic foundation for building software with AI agents **saf
 | How to contribute and review | [`CONTRIBUTING.md`](CONTRIBUTING.md) |
 | How to report vulnerabilities, and what to do if a secret leaks | [`SECURITY.md`](SECURITY.md) |
 | Agent risks (OWASP ASI01 to ASI10) and the controls that cover them | [`docs/security/threat-model.md`](docs/security/threat-model.md) |
+| Rules for adding packages, installers and Actions | [`docs/security/supply-chain.md`](docs/security/supply-chain.md), [`.github/dependabot.yml`](.github/dependabot.yml) |
 
-Coming next (see Issues): supply-chain and MCP policies, safe agent settings for Claude Code and OpenCode, secret scanning, a dev container, CI, starter skills.
+Coming next (see Issues): MCP policy, safe agent settings for Claude Code and OpenCode, secret scanning, a dev container, CI, starter skills.
 
 ## Core rules in one minute
 
@@ -41,13 +42,13 @@ Coming next (see Issues): supply-chain and MCP policies, safe agent settings for
 ## Repository map
 
 ```text
-.github/            Issue forms and PR template
+.github/            Issue forms, PR template, Dependabot config
 docs/
   agents/           agent contract and autonomy policy
   architecture/     system architecture (filled per project)
   decisions/        ADRs
   development/      contributor docs (labels, setup)
-  security/         threat model
+  security/         threat model, supply-chain policy
 AGENTS.md           entry point for every agent
 MASTER_PROMPT.md    prompt to bootstrap a new project
 SECURITY.md         vulnerability reporting and secret-exposure steps

@@ -1,0 +1,39 @@
+# Dependabot version updates. Policy: docs/security/supply-chain.md
+# - weekly, one grouped PR per ecosystem
+# - cooldown: wait 3 days (72 hours) before proposing a new release
+# - security updates are not delayed by the cooldown
+# Projects created from the template: uncomment the block for your package manager.
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 3
+    groups:
+      github-actions:
+        patterns: ["*"]
+    labels: ["dependencies", "security"]
+
+  # - package-ecosystem: "npm"
+  #   directory: "/"
+  #   schedule:
+  #     interval: "weekly"
+  #   cooldown:
+  #     default-days: 3
+  #   groups:
+  #     npm:
+  #       patterns: ["*"]
+  #   labels: ["dependencies"]
+
+  # - package-ecosystem: "pip"   # also covers uv and Poetry lockfiles
+  #   directory: "/"
+  #   schedule:
+  #     interval: "weekly"
+  #   cooldown:
+  #     default-days: 3
+  #   groups:
+  #     python:
+  #       patterns: ["*"]
+  #   labels: ["dependencies"]
