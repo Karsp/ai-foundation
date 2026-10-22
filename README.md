@@ -21,8 +21,9 @@ A reusable, model-agnostic foundation for building software with AI agents **saf
 | Agent risks (OWASP ASI01 to ASI10) and the controls that cover them | [`docs/security/threat-model.md`](docs/security/threat-model.md) |
 | Rules for adding packages, installers and Actions | [`docs/security/supply-chain.md`](docs/security/supply-chain.md), [`.github/dependabot.yml`](.github/dependabot.yml) |
 | Approved MCP servers and how to add one | [`docs/security/mcp-policy.md`](docs/security/mcp-policy.md), [`.mcp.json`](.mcp.json) |
+| Where secrets live, and a scan that blocks them before a commit | [`docs/security/secrets.md`](docs/security/secrets.md), [`.pre-commit-config.yaml`](.pre-commit-config.yaml), [`.env.example`](.env.example) |
 
-Coming next (see Issues): secret scanning, a dev container, CI, starter skills.
+Coming next (see Issues): a dev container, CI, starter skills.
 
 ## Core rules in one minute
 
@@ -37,9 +38,10 @@ Coming next (see Issues): secret scanning, a dev container, CI, starter skills.
 
 1. On GitHub, click **Use this template** and create the new repository (private to start).
 2. Apply the [GitHub setup checklist](docs/development/github-setup.md) and run its two checks: secret scanning and push protection, Dependabot, private vulnerability reporting, a rule that `main` needs a PR, squash merges with the PR title as message.
-3. Open a session with your agent and paste [`MASTER_PROMPT.md`](MASTER_PROMPT.md). Ask it to work through [`docs/PROJECT_ARCHITECTURE_GUIDE.md`](docs/PROJECT_ARCHITECTURE_GUIDE.md) and record the answers as ADRs in a PR.
-4. Review `docs/agents/autonomy.md` §19 and change it only through an ADR.
-5. Let the agent write the first Issues, then work them one PR at a time.
+3. Install the secret-scan hook in your clone ([steps](docs/security/secrets.md#install-the-hook-in-wsl2-once-per-clone)).
+4. Open a session with your agent and paste [`MASTER_PROMPT.md`](MASTER_PROMPT.md). Ask it to work through [`docs/PROJECT_ARCHITECTURE_GUIDE.md`](docs/PROJECT_ARCHITECTURE_GUIDE.md) and record the answers as ADRs in a PR.
+5. Review `docs/agents/autonomy.md` §19 and change it only through an ADR.
+6. Let the agent write the first Issues, then work them one PR at a time.
 
 ## Repository map
 
@@ -50,9 +52,11 @@ docs/
   architecture/     system architecture (filled per project)
   decisions/        ADRs
   development/      contributor docs (labels, setup)
-  security/         threat model, supply-chain and MCP policies
+  security/         threat model, secrets, supply-chain and MCP policies
 .claude/            Claude Code permissions and sandbox
+.env.example        names of the environment variables a project needs
 .mcp.json           MCP servers (empty; see the MCP policy)
+.pre-commit-config.yaml  gitleaks secret scan on every commit
 AGENTS.md           entry point for every agent
 CLAUDE.md           Claude Code adapter (imports AGENTS.md)
 MASTER_PROMPT.md    prompt to bootstrap a new project

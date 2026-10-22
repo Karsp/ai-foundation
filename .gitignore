@@ -11,3 +11,6 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 .idea/
+
+# Agent local settings (personal overrides, never shared)
+.claude/settings.local.json

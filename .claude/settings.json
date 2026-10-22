@@ -28,6 +28,12 @@
       "Bash(git push -f *)",
       "Bash(git push * --force *)",
       "Bash(git push * -f *)",
+      "Bash(git commit --no-verify *)",
+      "Bash(git commit * --no-verify *)",
+      "Bash(git commit * --no-verify)",
+      "Bash(git commit -n *)",
+      "Bash(git push --no-verify *)",
+      "Bash(git push * --no-verify *)",
       "Bash(rm -rf *)",
       "Bash(rm -fr *)",
       "Bash(sh)",
@@ -65,7 +71,10 @@
     "enabled": true,
     "failIfUnavailable": true,
     "allowUnsandboxedCommands": false,
-    "excludedCommands": ["git", "gh"],
+    "excludedCommands": [
+      "git",
+      "gh"
+    ],
     "filesystem": {
       "denyRead": [
         "~/.ssh",
