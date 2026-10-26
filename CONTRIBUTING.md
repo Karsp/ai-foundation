@@ -31,7 +31,7 @@ Go PR by PR, in any order unless the PR says it depends on another. For each one
 3. **Read the Validation section.** It lists what was checked and how. Ask for proof if something important isn't listed.
 4. **Spot-check the two easy-to-miss items:**
    - *Docs still true:* if a changed file is mentioned elsewhere (e.g. `AGENTS.md` links), those mentions still make sense.
-   - *Nothing sensitive or misleading:* search the diff (Ctrl+F) for `TODO`, `[SET]`, `password`, `token`, `secret`, real names and email addresses. Secret scanning and CI will automate most of this ([#2](https://github.com/Karsp/ai-foundation/issues/2), [#14](https://github.com/Karsp/ai-foundation/issues/14)).
+   - *Nothing sensitive or misleading:* search the diff (Ctrl+F) for `TODO`, `[SET]`, `password`, `token`, `secret`, real names and email addresses. Secret scanning and CI catch most of this ([GitHub setup](docs/development/github-setup.md), [CI](docs/development/ci-template.md)).
 5. **Rule or security changes** (labels `governance`, `security`) get a slower read: ask "what could an agent now do that it couldn't before?"
 6. **Merge** with *Squash and merge*, or leave a comment and the author fixes it on the same branch.
 
