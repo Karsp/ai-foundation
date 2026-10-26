@@ -72,8 +72,9 @@ If it prints `0` or "No such file or directory", go on. If it prints `1`, follow
 npm config set prefix ~/.local                       # per-user installs, no sudo
 npm install -g @anthropic-ai/claude-code@2.1.304     # or a newer version at least 72 hours old
 pipx install pre-commit==4.7.0
-pipx ensurepath                                      # then open a new terminal
-claude --version
+pipx ensurepath                                      # adds ~/.local/bin to PATH
+source ~/.bashrc                                     # or open a new terminal
+claude --version                                     # prints 2.1.304 (Claude Code)
 ```
 
 To pick a newer Claude Code version, list release dates with `npm view @anthropic-ai/claude-code time --json` and choose one published at least 72 hours ago ([supply-chain policy](../security/supply-chain.md)).
