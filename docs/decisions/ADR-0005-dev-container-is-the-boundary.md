@@ -1,6 +1,6 @@
 # ADR-0005: In the dev container, the container is the boundary
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-10-22
 - **Deciders:** Karsp
 - **Issue:** #13
