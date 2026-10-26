@@ -17,7 +17,7 @@ In the dev container, the container itself is the isolation boundary, and Claude
 
 - mounts only the project folder (no home folder, credentials or Docker socket);
 - runs as a non-root user whose only `sudo` right is starting the firewall;
-- blocks all outbound traffic except DNS, GitHub and the hosts in `.devcontainer/allowed-domains.txt`, and all IPv6, with an iptables firewall at every start;
+- blocks all outbound traffic except DNS, GitHub and the hosts in the lists turned on from `.devcontainer/firewall/` (one per model provider, no wildcards), and all IPv6, with an iptables firewall at every start;
 - keeps Docker's default seccomp profile.
 
 In WSL2, nothing changes: Claude Code's sandbox stays enabled with `failIfUnavailable`.

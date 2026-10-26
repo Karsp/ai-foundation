@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Egress firewall for the dev container: deny all outbound traffic except DNS,
-# GitHub's address ranges and the hosts in /etc/devcontainer/allowed-domains.txt.
+# GitHub's address ranges and the hosts in /etc/devcontainer/allowed-domains.txt,
+# which the image builds from the lists in .devcontainer/firewall/.
 # Runs as root at every container start (postStartCommand). Adapted from
 # Anthropic's reference dev container (github.com/anthropics/claude-code).
 set -euo pipefail
@@ -8,6 +9,18 @@ IFS=$'\n\t'
 
 DOMAINS_FILE=/etc/devcontainer/allowed-domains.txt
 SET=allowed-hosts
+
+# Fail closed: if anything below fails, block all traffic instead of leaving
+# the container open
+lock_down() {
+    status=$?
+    if [ "$status" -ne 0 ]; then
+        iptables -P INPUT DROP; iptables -P OUTPUT DROP; iptables -P FORWARD DROP
+        iptables -A INPUT -i lo -j ACCEPT; iptables -A OUTPUT -o lo -j ACCEPT
+        echo "Firewall setup failed: all outbound traffic is blocked. Fix the error above and restart the container." >&2
+    fi
+}
+trap lock_down EXIT
 
 # Keep Docker's internal DNS rules, then start from empty tables
 DOCKER_DNS_RULES=$(iptables-save -t nat | grep "127\.0\.0\.11" || true)
@@ -47,7 +60,8 @@ fi
 while read -r domain; do
     domain="${domain%%#*}"; domain="${domain//[[:space:]]/}"
     [ -z "$domain" ] && continue
-    ips=$(getent ahostsv4 "$domain" | awk '{print $1}' | sort -u)
+    [[ "$domain" == *"*"* ]] && { echo "ERROR: wildcards are not allowed: $domain" >&2; exit 1; }
+    ips=$(getent ahostsv4 "$domain" | awk '{print $1}' | sort -u || true)
     [ -n "$ips" ] || { echo "ERROR: cannot resolve $domain" >&2; exit 1; }
     while read -r ip; do
         [[ "$ip" =~ ^[0-9]{1,3}(\.[0-9]{1,3}){3}$ ]] \
@@ -83,4 +97,4 @@ fi
 if ! curl -sS -o /dev/null --connect-timeout 5 https://api.github.com/zen 2>/dev/null; then
     echo "ERROR: firewall check failed, api.github.com is not reachable" >&2; exit 1
 fi
-echo "Firewall ready: outbound traffic limited to GitHub and $DOMAINS_FILE"
+echo "Firewall ready: outbound traffic limited to GitHub and the hosts in $DOMAINS_FILE"

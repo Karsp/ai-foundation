@@ -1,0 +1,2 @@
+# OpenAI models (API key). Sign-in with a ChatGPT account would also need auth.openai.com.
+api.openai.com

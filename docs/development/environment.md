@@ -5,8 +5,8 @@ Agents run shell commands with your permissions. A prompt injection or a malicio
 | | WSL2 | Dev container |
 |---|---|---|
 | Use it for | Daily work on a Windows machine | A throwaway, identical environment; agents other than Claude Code |
-| What isolates the agent | Claude Code's sandbox: commands can write only in the project and reach only GitHub, npm and PyPI | The container: it sees only the project folder, and a firewall lets out only GitHub, npm, PyPI and Anthropic |
-| Covers OpenCode | No (OpenCode has no sandbox) | Yes, once it is added to the image |
+| What isolates the agent | Claude Code's sandbox: commands can write only in the project and reach only GitHub, npm and PyPI | The container: it sees only the project folder, and a firewall lets out only GitHub, npm, PyPI and the model providers you turn on |
+| Covers OpenCode | No (OpenCode has no sandbox) | Yes: set its version in `devcontainer.json` |
 | Setup | Once per machine | Docker Desktop and VS Code, then one click per project |
 
 Both use the settings in [`.claude/settings.json`](../../.claude/settings.json) and the secret scan in [`.pre-commit-config.yaml`](../../.pre-commit-config.yaml).
@@ -138,10 +138,10 @@ If Claude asks to retry a failed command outside the sandbox, decline. More chec
 | Part | File | What it does |
 |---|---|---|
 | Base image | [`Dockerfile`](../../.devcontainer/Dockerfile) | Ubuntu 26.04, pinned by digest. Dependabot proposes digest updates weekly |
-| Tools | `Dockerfile` | Git, `gh`, Node.js 22, Go and pipx from the Ubuntu archive; Claude Code and pre-commit at exact versions (build arguments); the gitleaks hook built in advance |
+| Tools | `Dockerfile` | Git, `gh`, Node.js 22, Go and pipx from the Ubuntu archive; the agents you choose (Claude Code, OpenCode) and pre-commit at exact versions; the gitleaks hook built in advance |
 | Mounts | [`devcontainer.json`](../../.devcontainer/devcontainer.json) | Only the project folder, at `/workspace`. No home folder, `~/.ssh`, cloud credentials or Docker socket |
 | User | `Dockerfile` | `ubuntu` (uid 1000), not root. Its only `sudo` right is starting the firewall |
-| Firewall | [`init-firewall.sh`](../../.devcontainer/init-firewall.sh), [`allowed-domains.txt`](../../.devcontainer/allowed-domains.txt) | Runs at every start. Blocks all outbound traffic except DNS, GitHub and the listed hosts; blocks IPv6. Needs the `NET_ADMIN` and `NET_RAW` capabilities |
+| Firewall | [`init-firewall.sh`](../../.devcontainer/init-firewall.sh), [`firewall/`](../../.devcontainer/firewall/README.md) | Runs at every start. Blocks all outbound traffic except DNS, GitHub and the hosts in the lists you turn on (`base` plus, by default, `anthropic`); refuses wildcards; blocks IPv6. Needs the `NET_ADMIN` and `NET_RAW` capabilities |
 | Claude Code policy | [`managed-settings.json`](../../.devcontainer/managed-settings.json) | Turns Claude Code's own sandbox off inside the container, where it cannot run, because the container and its firewall are the boundary ([ADR-0005](../decisions/ADR-0005-dev-container-is-the-boundary.md)). Also turns off auto-updates and non-essential traffic |
 
 Claude Code's sign-in is not kept in a volume: after a rebuild you sign in again. This is deliberate, so nothing an agent writes to `~/.claude` (settings, hooks) survives a rebuild.
@@ -169,10 +169,12 @@ VS Code shares your Git credentials with the container by default, so `git push`
 
 All changes go through a PR, and agents must ask before editing `.devcontainer/` ([adapters](../agents/adapters/README.md)).
 
-- **New Claude Code version:** change `CLAUDE_CODE_VERSION` in the `Dockerfile` to a version at least 72 hours old, then **Rebuild Container**.
-- **New host** (for example a model provider for OpenCode): add it to `allowed-domains.txt` with a comment saying why. A new host is a new way out for data (Rule of Two), so say it in the PR.
+Agents and firewall lists are set in `build.args` in [`devcontainer.json`](../../.devcontainer/devcontainer.json). After any change, run **Dev Containers: Rebuild Container**.
+
+- **Agent versions:** `CLAUDE_CODE_VERSION` and `OPENCODE_VERSION`, each at least 72 hours old. Leave one empty to not install it.
+- **OpenCode:** set `OPENCODE_VERSION` (for example `1.19.4`) and add `opencode` plus your model provider's list to `FIREWALL_LISTS`, for example `"anthropic opencode openai"`. Its own settings are in [`opencode.json`](../../opencode.json).
+- **Model providers:** turn on a list from [`.devcontainer/firewall/`](../../.devcontainer/firewall/README.md) (`anthropic`, `openai`, `openrouter`, `opencode`). For another provider, add a short list file with its API host only. Every host is a new way out for data (Rule of Two), so say why in the PR.
 - **Project tools** (Python, a database client): add them to the `Dockerfile` from the Ubuntu archive, or at exact versions.
-- **OpenCode:** add `RUN npm install -g opencode-ai@<version>` (at least 72 hours old) after the Claude Code line, and the provider's API host to `allowed-domains.txt`.
 
 ### Known limits
 

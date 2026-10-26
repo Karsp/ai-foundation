@@ -3,7 +3,16 @@
   "name": "ai-foundation",
   "build": {
     "dockerfile": "Dockerfile",
-    "context": ".."
+    "context": "..",
+    // Which agents to install (empty = none) and which firewall lists to turn
+    // on besides "base". Versions at least 72 hours old. Lists: .devcontainer/firewall/
+    // Example for OpenCode with OpenAI: "OPENCODE_VERSION": "1.19.4",
+    // "FIREWALL_LISTS": "anthropic opencode openai"
+    "args": {
+      "CLAUDE_CODE_VERSION": "2.1.304",
+      "OPENCODE_VERSION": "",
+      "FIREWALL_LISTS": "anthropic"
+    }
   },
   // The firewall needs these two capabilities; nothing else is added.
   "runArgs": ["--cap-add=NET_ADMIN", "--cap-add=NET_RAW"],

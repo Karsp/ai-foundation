@@ -5,8 +5,12 @@
 # Ubuntu 26.04 LTS, pinned by digest
 FROM ubuntu:26.04@sha256:c098726dd9b9733f3e885f8de0ef375206a311b0a317eadc40d347b1115fb944
 
-# Claude Code: a version published at least 72 hours ago
+# Agents to install, each at a version published at least 72 hours ago.
+# Empty means not installed. Set them in devcontainer.json ("build.args").
 ARG CLAUDE_CODE_VERSION=2.1.304
+ARG OPENCODE_VERSION=
+# Firewall lists to turn on besides "base" (.devcontainer/firewall/)
+ARG FIREWALL_LISTS=anthropic
 ARG PRE_COMMIT_VERSION=4.7.0
 
 # Tools from the Ubuntu archive: Git, GitHub CLI, Node.js 22 (for npm installs),
@@ -17,16 +21,24 @@ RUN apt-get update \
         iptables ipset sudo \
     && rm -rf /var/lib/apt/lists/*
 
-# Claude Code, exact version, installed globally; updates come from rebuilding
-RUN npm install -g "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}"
+# Agents, exact versions, installed globally; updates come from rebuilding
+RUN if [ -n "$CLAUDE_CODE_VERSION" ]; then npm install -g "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}"; fi \
+    && if [ -n "$OPENCODE_VERSION" ]; then npm install -g "opencode-ai@${OPENCODE_VERSION}"; fi
+ENV OPENCODE_DISABLE_AUTOUPDATE=1
 
 # Container-wide Claude Code settings: the container is the isolation boundary
 COPY .devcontainer/managed-settings.json /etc/claude-code/managed-settings.json
 
 # Egress firewall: only root can change it; the user may only run the script
 COPY .devcontainer/init-firewall.sh /usr/local/bin/init-firewall.sh
-COPY .devcontainer/allowed-domains.txt /etc/devcontainer/allowed-domains.txt
-RUN chmod 0755 /usr/local/bin/init-firewall.sh \
+COPY .devcontainer/firewall/ /tmp/firewall/
+RUN mkdir -p /etc/devcontainer \
+    && for list in base $FIREWALL_LISTS; do \
+         [ -f "/tmp/firewall/$list.txt" ] || { echo "Unknown firewall list: $list" >&2; exit 1; }; \
+         cat "/tmp/firewall/$list.txt"; \
+       done > /etc/devcontainer/allowed-domains.txt \
+    && rm -rf /tmp/firewall \
+    && chmod 0755 /usr/local/bin/init-firewall.sh \
     && chmod 0644 /etc/devcontainer/allowed-domains.txt \
     && gpasswd -d ubuntu sudo \
     && echo "ubuntu ALL=(root) NOPASSWD: /usr/local/bin/init-firewall.sh" > /etc/sudoers.d/firewall \
