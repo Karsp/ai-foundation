@@ -1,0 +1,3 @@
+# OpenCode: its model catalog (checked in the opencode-ai 1.19.4 binary).
+# Turn on the list for the model provider as well.
+models.opencode.ai

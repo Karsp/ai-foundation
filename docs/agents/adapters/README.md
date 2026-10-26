@@ -22,17 +22,19 @@ Personal overrides go in files that are not committed (`.claude/settings.local.j
 | Never read secrets (§5) | `deny` Read and Edit of `.env`, `.env.local`, `.env.*.local`, `.env.development`, `.env.production`, `.env.staging`, `.env.test`, `*.pem`, `*.key`, `~/.ssh`, `~/.aws`, `~/.config/gh`, `~/.gnupg`; the sandbox also hides these from shell commands | `read`/`edit` deny `*.env`, `*.env.*` (except `*.env.example`), `*.pem`, `*.key`; `external_directory` deny the same home folders; `shell` deny commands mentioning `.env` |
 | No destructive actions without approval (§5) | `deny` `git push --force`/`-f`, `rm -rf`, `sudo`, and bare `sh`/`bash`/`zsh` (blocks `curl … \| sh`) | `shell` deny the same patterns, including `* \| sh` and `* \| bash` |
 | Dependencies need approval ([supply chain](../../security/supply-chain.md)) | `ask` for `npm install/i/add/update`, `npx`, `pnpm add/install/update`, `yarn add`, `pip install`, `uv add`, `uv pip install`, `uvx`, `curl`, `wget` | `shell` ask by default; installs explicitly `ask` |
-| Agent rules and CI change only with approval (§5, §6) | `ask` before editing `AGENTS.md`, `CLAUDE.md`, `.claude/**`, `opencode.json`, `.mcp.json`, `.github/workflows/**` | `edit` ask for the same files |
+| Agent rules and CI change only with approval (§5, §6) | `ask` before editing `AGENTS.md`, `CLAUDE.md`, `.claude/**`, `opencode.json`, `.mcp.json`, `.github/workflows/**`, `.devcontainer/**` | `edit` ask for the same files |
 | Never skip the secret scan ([secrets](../../security/secrets.md)) | `deny` `git commit --no-verify`/`-n` and `git push --no-verify` | `shell` deny the same patterns |
-| Run isolated ([ADR-0004](../../decisions/ADR-0004-agents-run-in-isolated-environment.md)) | `sandbox.enabled` with `failIfUnavailable`: Claude Code refuses to start without a working sandbox; `allowUnsandboxedCommands: false`; network limited to GitHub, npm and PyPI | No built-in sandbox: run OpenCode inside WSL2 or the dev container ([#13](https://github.com/Karsp/ai-foundation/issues/13)) |
+| Run isolated ([ADR-0004](../../decisions/ADR-0004-agents-run-in-isolated-environment.md)) | `sandbox.enabled` with `failIfUnavailable`: Claude Code refuses to start without a working sandbox; `allowUnsandboxedCommands: false`; network limited to GitHub, npm and PyPI; in the dev container the container is the boundary instead ([environment](../../development/environment.md)) | No built-in sandbox: run OpenCode in the [dev container](../../development/environment.md#option-b-dev-container) |
 | MCP servers only from the approved list ([MCP policy](../../security/mcp-policy.md)) | `enableAllProjectMcpServers: false`: each server in `.mcp.json` needs approval | Servers only in `opencode.json` → `mcp`, through a PR |
 | No bypass | `disableBypassPermissionsMode: "disable"` | n/a |
 
 ## Known limits
 
-- **The sandbox needs Linux, WSL2 or macOS.** It does not run on native Windows, and on Linux/WSL2 it needs `bubblewrap` and `socat` installed. With `failIfUnavailable`, Claude Code stops with an error instead of running unprotected. Install them (`sudo apt install bubblewrap socat`) or use the dev container (#13).
-- **`git` and `gh` run outside the sandbox** (`excludedCommands`), because they need your GitHub credentials. Permission rules still apply to them (for example, force pushes are denied), and the ruleset on `main` blocks the rest ([GitHub setup](../../development/github-setup.md)).
+- **The sandbox needs Linux, WSL2 or macOS.** It does not run on native Windows, and on Linux/WSL2 it needs `bubblewrap` and `socat` installed. With `failIfUnavailable`, Claude Code stops with an error instead of running unprotected. Set it up with the [environment guide](../../development/environment.md).
+- **It does not run inside a Docker container either.** Docker blocks the system calls it needs, so the dev container turns it off in `.devcontainer/managed-settings.json` and relies on the container and its firewall instead.
+- **Commands that need your GitHub credentials run outside the sandbox** (`excludedCommands`): `git push`, `git fetch`, `git pull`, `git clone`, `git ls-remote` and `gh`. Every other `git` command (commit, diff, log) stays sandboxed. Each entry must end in ` *`: a bare `git` would match only `git` with no arguments. Permission rules still apply to excluded commands (for example, force pushes are denied), and the ruleset on `main` blocks the rest ([GitHub setup](../../development/github-setup.md)).
 - **The sandbox does not cover MCP servers or hooks.** They run with your user's rights, which is why the [MCP policy](../../security/mcp-policy.md) exists.
+- **The sandbox protects files that can run code.** Sandboxed commands can't write `.git/config`, `.git/hooks`, `.claude` settings, `.mcp.json`, `.vscode`, `.idea` or shell startup files. While a command runs, missing ones appear as empty placeholders and show up in `git status`; `.gitignore` hides the shell and Git config ones, and the rest must never be committed.
 - **Pattern rules can be worked around** by a determined or injected agent (for example a script that reads a secret). They catch mistakes and obvious attacks; isolation and least privilege do the rest.
 - **The example env file must be named `.env.example`.** Other names like `.env.sample` are not on the deny lists but are also not meant to hold secrets.
 
@@ -48,6 +50,7 @@ Run these in a throwaway folder with a fake `.env` (for example `API_KEY=fake`),
 | Ask it to run `git push --force origin main` | Denied |
 | Ask it to run `git commit --no-verify -m test` | Denied |
 | Start Claude Code where `bubblewrap` is missing | "sandbox required but unavailable … refusing to start" |
+| Ask it to run `git fetch` in WSL2 | Works: it runs outside the sandbox with your credentials |
 | Run `opencode debug config` | The `permission` block appears as written |
 
 Re-run them after upgrading Claude Code or OpenCode, and validate `.claude/settings.json` against the [Claude Code settings schema](https://json.schemastore.org/claude-code-settings.json).

@@ -63,7 +63,8 @@
       "Edit(.claude/**)",
       "Edit(opencode.json)",
       "Edit(.mcp.json)",
-      "Edit(.github/workflows/**)"
+      "Edit(.github/workflows/**)",
+      "Edit(.devcontainer/**)"
     ]
   },
   "enableAllProjectMcpServers": false,
@@ -72,8 +73,12 @@
     "failIfUnavailable": true,
     "allowUnsandboxedCommands": false,
     "excludedCommands": [
-      "git",
-      "gh"
+      "git push *",
+      "git fetch *",
+      "git pull *",
+      "git clone *",
+      "git ls-remote *",
+      "gh *"
     ],
     "filesystem": {
       "denyRead": [

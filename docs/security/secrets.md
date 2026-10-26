@@ -40,14 +40,15 @@ Never put a secret in: committed files, `.env.example`, Issues, PRs, commit mess
 sudo apt install pipx
 pipx install pre-commit==4.7.0
 
-# 2. in the repository folder
-pre-commit install
+# 2. in the repository folder (--install-hooks builds gitleaks now, so the
+#    hook also works inside Claude Code's sandbox, which blocks the download)
+pre-commit install --install-hooks
 
 # 3. optional: scan every file once
 pre-commit run gitleaks --all-files
 ```
 
-The first commit after installing takes longer: pre-commit builds gitleaks (it installs Go by itself if you don't have it). The same steps work on Linux and macOS.
+Installing the hooks takes a few minutes the first time: pre-commit builds gitleaks (it installs Go by itself if you don't have it). The same steps work on Linux and macOS. The full WSL2 setup is in the [environment guide](../development/environment.md); the dev container has the hook built in.
 
 ### When the hook blocks a commit
 
