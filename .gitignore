@@ -14,3 +14,15 @@ Thumbs.db
 
 # Agent local settings (personal overrides, never shared)
 .claude/settings.local.json
+
+# Placeholders Claude Code's sandbox creates at the repository root while it
+# runs (docs/agents/adapters/README.md). No project needs these files here.
+/.bashrc
+/.bash_profile
+/.bash_login
+/.profile
+/.zshrc
+/.zprofile
+/.zshenv
+/.gitconfig
+/.ripgreprc
