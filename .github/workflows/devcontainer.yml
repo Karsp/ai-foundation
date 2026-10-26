@@ -1,0 +1,57 @@
+# Builds the dev container and checks its firewall, when a pull request
+# changes it (including Dependabot's base image updates) or the check tools
+# it builds in advance. Guide: docs/development/environment.md
+name: Dev container
+
+on:
+  pull_request:
+    paths: &paths
+      - ".devcontainer/**"
+      - ".pre-commit-config.yaml"
+      - ".github/workflows/devcontainer.yml"
+  push:
+    branches: [main]
+    paths: *paths
+
+permissions:
+  contents: read
+
+concurrency:
+  group: devcontainer-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    name: Build and firewall
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # the secret scan reads every commit
+          persist-credentials: false
+
+      - name: Build the image
+        run: docker build --file .devcontainer/Dockerfile --tag devcontainer .
+
+      - name: Start it with the firewall
+        run: |
+          docker run --detach --name dc --cap-add=NET_ADMIN --cap-add=NET_RAW \
+            devcontainer sleep infinity
+          docker exec dc sudo /usr/local/bin/init-firewall.sh
+
+      - name: Check the firewall
+        run: |
+          if docker exec dc curl -sS --max-time 10 https://example.com; then
+            echo "::error::example.com is reachable: the firewall lets everything out"; exit 1
+          fi
+          docker exec dc curl -sS --fail --max-time 20 -o /dev/null https://registry.npmjs.org/
+          if docker exec dc sudo -n iptables -F; then
+            echo "::error::the container user can change the firewall"; exit 1
+          fi
+
+      - name: Run the checks behind the firewall, with the hooks built into the image
+        run: |
+          docker cp . dc:/workspace
+          docker exec --user root dc chown -R ubuntu:ubuntu /workspace
+          docker exec --workdir /workspace dc make ci

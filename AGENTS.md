@@ -46,7 +46,16 @@ Understand → Issue → Branch → Plan → Implement → Test → Validate →
 
 Use the commands documented here; do not invent alternative workflows. Run the relevant ones before declaring work complete.
 
-> This template has no build or test commands yet ([#14](https://github.com/Karsp/ai-foundation/issues/14)). Projects created from it list theirs here: `setup`, `build`, `test`, `lint`, `format`, `typecheck`, `validate`, `security`.
+| Command | Run it |
+|---|---|
+| `make setup` | Once per clone: installs and builds the Git hooks |
+| `make lint` | After changing files: every style, syntax, workflow and link check |
+| `make format` | To fix final newlines and trailing spaces automatically |
+| `make security` | Before a PR: scans the whole Git history for secrets |
+| `make test` | After changing code (this template has no tests) |
+| `make ci` | Before declaring work complete: exactly what CI runs on the PR |
+
+Projects created from the template keep these names and fill in their stack: dependency install in `setup`, tests in `test`, dependency audit in `security`, and `build` or `typecheck` targets where needed ([CI guide](docs/development/ci-template.md)).
 
 Testing honesty: include appropriate tests or document why not; never remove tests to make CI pass, weaken assertions, disable quality gates or hide failures. `NOT RUN` is never `PASS`.
 
