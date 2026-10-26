@@ -55,10 +55,10 @@ All from the Ubuntu archive, which is signed and versioned:
 
 ```bash
 sudo apt update
-sudo apt install -y git gh nodejs npm pipx bubblewrap socat
+sudo apt install -y git gh nodejs npm pipx bubblewrap socat ripgrep
 ```
 
-`bubblewrap` and `socat` are what Claude Code's sandbox runs on. Check whether Ubuntu's AppArmor blocks bubblewrap:
+`bubblewrap`, `socat` and `ripgrep` are what Claude Code's sandbox runs on (`/sandbox` lists any that are missing). Check whether Ubuntu's AppArmor blocks bubblewrap:
 
 ```bash
 sysctl kernel.apparmor_restrict_unprivileged_userns
