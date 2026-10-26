@@ -81,9 +81,11 @@ To pick a newer Claude Code version, list release dates with `npm view @anthropi
 
 ### 5. Your personal Claude Code settings
 
-Create `~/.claude/settings.json` in Ubuntu. It applies to every project on this machine and adds to the project settings:
+Create `~/.claude/settings.json` in Ubuntu. It applies to every project on this machine and adds to the project settings. The `~/.claude` folder appears only after Claude Code's first start, so create it first:
 
-```json
+```bash
+mkdir -p ~/.claude
+cat > ~/.claude/settings.json <<'EOF'
 {
   "autoUpdatesChannel": "stable",
   "permissions": {
@@ -93,6 +95,7 @@ Create `~/.claude/settings.json` in Ubuntu. It applies to every project on this 
     "filesystem": { "denyRead": ["/mnt"] }
   }
 }
+EOF
 ```
 
 - `autoUpdatesChannel: stable`: automatic updates install a version about a week old instead of the newest one.
