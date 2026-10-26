@@ -38,9 +38,16 @@ appendWindowsPath=false
 EOF
 ```
 
-Then, in PowerShell, `wsl --shutdown` and open Ubuntu again.
+Then run `wsl --shutdown` in **PowerShell** (restarting from inside Linux is not enough), wait about 10 seconds, and open Ubuntu again. Check it worked:
 
-The trade-off: `code .` and `explorer.exe .` no longer work from the Ubuntu terminal. Open VS Code on Windows and use **WSL: Connect to WSL** instead, and reach your Linux files from Windows Explorer at `\\wsl.localhost\Ubuntu-26.04`. Step 5 also blocks the agent from reading `/mnt`.
+```bash
+cmd.exe /c ver                # fails: Windows programs can't start
+echo $PATH | grep -c /mnt/c   # prints 0
+```
+
+Your Windows drives are still visible under `/mnt/c`: this step doesn't hide them. Step 5 stops the agent from reading them.
+
+The trade-off: `code .` and `explorer.exe .` no longer work from the Ubuntu terminal. Open VS Code on Windows and use **WSL: Connect to WSL** instead, and reach your Linux files from Windows Explorer at `\\wsl.localhost\Ubuntu-26.04`.
 
 ### 3. Install the tools
 
