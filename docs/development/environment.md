@@ -127,7 +127,7 @@ Keep repositories under `~/code`, never under `/mnt/c`: it is faster, and the Wi
 
 ### 8. Check it works
 
-Run `claude` in the repository. It must start without "sandbox required but unavailable". Then:
+Run `claude` in the repository. It must start without "sandbox required but unavailable". The first time, sign in: the browser doesn't open by itself (step 2), so copy the address it shows into your Windows browser and paste the code back. When it asks whether you trust the folder, answer yes for your own repository. Then:
 
 | Check | Expected |
 |---|---|
