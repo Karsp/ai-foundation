@@ -3,7 +3,7 @@
 # Guide: docs/development/environment.md
 
 # Ubuntu 26.04 LTS, pinned by digest
-FROM ubuntu:26.04@sha256:c098726dd9b9733f3e885f8de0ef375206a311b0a317eadc40d347b1115fb944
+FROM ubuntu:26.04@sha256:6a06111c3b0a8600feadb270aec771dc239bf407b25625f93f44ab00e11f4d3c
 
 # Agents to install, each at a version published at least 72 hours ago.
 # Empty means not installed. Set them in devcontainer.json ("build.args").
