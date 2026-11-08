@@ -19,11 +19,11 @@ Personal overrides go in files that are not committed (`.claude/settings.local.j
 
 | Rule in `AGENTS.md` / policy | Claude Code (`.claude/settings.json`) | OpenCode (`opencode.json`) |
 |---|---|---|
-| Never read secrets (§5) | `deny` Read and Edit of `.env`, `.env.local`, `.env.*.local`, `.env.development`, `.env.production`, `.env.staging`, `.env.test`, `*.pem`, `*.key`, `~/.ssh`, `~/.aws`, `~/.config/gh`, `~/.gnupg`; the sandbox also hides these from shell commands | `read`/`edit` deny `*.env`, `*.env.*` (except `*.env.example`), `*.pem`, `*.key`; `external_directory` deny the same home folders; `shell` deny commands mentioning `.env` |
-| No destructive actions without approval (§5) | `deny` `git push --force`/`-f`, `rm -rf`, `sudo`, and bare `sh`/`bash`/`zsh` (blocks `curl … \| sh`) | `shell` deny the same patterns, including `* \| sh` and `* \| bash` |
-| Dependencies need approval ([supply chain](../../security/supply-chain.md)) | `ask` for `npm install/i/add/update`, `npx`, `pnpm add/install/update`, `yarn add`, `pip install`, `uv add`, `uv pip install`, `uvx`, `curl`, `wget` | `shell` ask by default; installs explicitly `ask` |
+| Never read secrets (§5) | `deny` Read and Edit of `.env`, `.env.local`, `.env.*.local`, `.env.development`, `.env.production`, `.env.staging`, `.env.test`, `*.pem`, `*.key`, `~/.ssh`, `~/.aws`, `~/.config/gh`, `~/.gnupg`; the sandbox also hides these from shell commands | `read`/`edit` deny `*.env`, `*.env.*` (except `*.env.example`), `*.pem`, `*.key`; `external_directory` deny the same home folders; `bash` deny commands mentioning `.env` |
+| No destructive actions without approval (§5) | `deny` `git push --force`/`-f`, `rm -rf`, `sudo`, and bare `sh`/`bash`/`zsh` (blocks `curl … \| sh`) | `bash` deny the same patterns, including `* \| sh` and `* \| bash` |
+| Dependencies need approval ([supply chain](../../security/supply-chain.md)) | `ask` for `npm install/i/add/update`, `npx`, `pnpm add/install/update`, `yarn add`, `pip install`, `uv add`, `uv pip install`, `uvx`, `curl`, `wget` | `bash` ask by default; installs explicitly `ask` |
 | Agent rules and CI change only with approval (§5, §6) | `ask` before editing `AGENTS.md`, `CLAUDE.md`, `.claude/**`, `opencode.json`, `.mcp.json`, `.github/workflows/**`, `.devcontainer/**` | `edit` ask for the same files |
-| Never skip the secret scan ([secrets](../../security/secrets.md)) | `deny` `git commit --no-verify`/`-n` and `git push --no-verify` | `shell` deny the same patterns |
+| Never skip the secret scan ([secrets](../../security/secrets.md)) | `deny` `git commit --no-verify`/`-n` and `git push --no-verify` | `bash` deny the same patterns |
 | Run isolated ([ADR-0004](../../decisions/ADR-0004-agents-run-in-isolated-environment.md)) | `sandbox.enabled` with `failIfUnavailable`: Claude Code refuses to start without a working sandbox; `allowUnsandboxedCommands: false`; network limited to GitHub, npm and PyPI; in the dev container the container is the boundary instead ([environment](../../development/environment.md)) | No built-in sandbox: run OpenCode in the [dev container](../../development/environment.md#option-b-dev-container) |
 | MCP servers only from the approved list ([MCP policy](../../security/mcp-policy.md)) | `enableAllProjectMcpServers: false`: each server in `.mcp.json` needs approval | Servers only in `opencode.json` → `mcp`, through a PR |
 | No bypass | `disableBypassPermissionsMode: "disable"` | n/a |
@@ -36,6 +36,7 @@ Personal overrides go in files that are not committed (`.claude/settings.local.j
 - **The sandbox does not cover MCP servers or hooks.** They run with your user's rights, which is why the [MCP policy](../../security/mcp-policy.md) exists.
 - **The sandbox protects files that can run code.** Sandboxed commands can't write `.git/config`, `.git/hooks`, `.claude` settings, `.mcp.json`, `.vscode`, `.idea` or shell startup files. While a command runs, missing ones appear as empty placeholders and show up in `git status`; `.gitignore` hides the shell and Git config ones, and the rest must never be committed.
 - **Pattern rules can be worked around** by a determined or injected agent (for example a script that reads a secret). They catch mistakes and obvious attacks; isolation and least privilege do the rest.
+- **OpenCode ignores permission keys it doesn't know.** Its command tool is checked against `bash` (OpenCode 1.19.4). Newer OpenCode docs describe a different format, where the same action is called `shell`; check `opencode debug agent build` after every OpenCode upgrade.
 - **The example env file must be named `.env.example`.** Other names like `.env.sample` are not on the deny lists but are also not meant to hold secrets.
 
 ## Checking the adapters
@@ -52,5 +53,6 @@ Run these in a throwaway folder with a fake `.env` (for example `API_KEY=fake`),
 | Start Claude Code where `bubblewrap` is missing | "sandbox required but unavailable … refusing to start" |
 | Ask it to run `git fetch` in WSL2 | Works: it runs outside the sandbox with your credentials |
 | Run `opencode debug config` | The `permission` block appears as written |
+| Run `opencode debug agent build` | The `permission` list has `bash` entries (for example `bash rm -rf * deny`). Rules under any other key for commands are silently ignored |
 
 Re-run them after upgrading Claude Code or OpenCode, and validate `.claude/settings.json` against the [Claude Code settings schema](https://json.schemastore.org/claude-code-settings.json).
