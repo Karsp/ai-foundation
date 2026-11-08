@@ -13,11 +13,11 @@ ARG OPENCODE_VERSION=
 ARG FIREWALL_LISTS=anthropic
 ARG PRE_COMMIT_VERSION=4.7.0
 
-# Tools from the Ubuntu archive: Git, GitHub CLI, Node.js 22 (for npm installs),
-# pipx and Go (for pre-commit and the gitleaks hook), iptables/ipset (firewall)
+# Tools from the Ubuntu archive: Git, GitHub CLI, make, Node.js 22 (for npm installs),
+# pipx and Go (for pre-commit and its hooks), iptables/ipset (firewall)
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        ca-certificates curl git gh jq nodejs npm pipx golang-go \
+        ca-certificates curl git gh jq make nodejs npm pipx golang-go \
         iptables ipset sudo \
     && rm -rf /var/lib/apt/lists/*
 
@@ -48,7 +48,7 @@ RUN mkdir -p /etc/devcontainer \
 USER ubuntu
 ENV PATH="/home/ubuntu/.local/bin:${PATH}"
 
-# pre-commit and the gitleaks hook, built now with the system Go, because the
+# pre-commit and its hooks, built now (Go hooks with the system Go), because the
 # firewall blocks the downloads a first build needs
 COPY --chown=ubuntu:ubuntu .pre-commit-config.yaml /tmp/hooks/.pre-commit-config.yaml
 RUN pipx install "pre-commit==${PRE_COMMIT_VERSION}" \

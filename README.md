@@ -23,8 +23,9 @@ A reusable, model-agnostic foundation for building software with AI agents **saf
 | Approved MCP servers and how to add one | [`docs/security/mcp-policy.md`](docs/security/mcp-policy.md), [`.mcp.json`](.mcp.json) |
 | Where agents run: WSL2 setup and a dev container with an egress firewall | [`docs/development/environment.md`](docs/development/environment.md), [`.devcontainer/`](.devcontainer/) |
 | Where secrets live, and a scan that blocks them before a commit | [`docs/security/secrets.md`](docs/security/secrets.md), [`.pre-commit-config.yaml`](.pre-commit-config.yaml), [`.env.example`](.env.example) |
+| Standard commands (`make help`) and the checks CI runs on every PR, plus an example CI for apps | [`Makefile`](Makefile), [`.github/workflows/ci.yml`](.github/workflows/ci.yml), [`docs/development/ci-template.md`](docs/development/ci-template.md) |
 
-Coming next (see Issues): CI, starter skills.
+Coming next (see Issues): starter skills.
 
 ## Core rules in one minute
 
@@ -39,28 +40,32 @@ Coming next (see Issues): CI, starter skills.
 
 1. On GitHub, click **Use this template** and create the new repository (private to start).
 2. Apply the [GitHub setup checklist](docs/development/github-setup.md) and run its two checks: secret scanning and push protection, Dependabot, private vulnerability reporting, a rule that `main` needs a PR, squash merges with the PR title as message.
-3. Set up WSL2 or the dev container ([environment guide](docs/development/environment.md)) and clone the repository there; the guide also installs the secret-scan hook.
-4. Open a session with your agent and paste [`MASTER_PROMPT.md`](MASTER_PROMPT.md). Ask it to work through [`docs/PROJECT_ARCHITECTURE_GUIDE.md`](docs/PROJECT_ARCHITECTURE_GUIDE.md) and record the answers as ADRs in a PR.
-5. Review `docs/agents/autonomy.md` §19 and change it only through an ADR.
-6. Let the agent write the first Issues, then work them one PR at a time.
+3. Set up WSL2 or the dev container ([environment guide](docs/development/environment.md)), clone the repository there and run `make setup` to install the checks.
+4. Adapt CI to your stack from the [example workflow](docs/development/ci-template.md#adapting-ci-for-a-project), then mark its checks as required.
+5. Open a session with your agent and paste [`MASTER_PROMPT.md`](MASTER_PROMPT.md). Ask it to work through [`docs/PROJECT_ARCHITECTURE_GUIDE.md`](docs/PROJECT_ARCHITECTURE_GUIDE.md) and record the answers as ADRs in a PR.
+6. Review `docs/agents/autonomy.md` §19 and change it only through an ADR.
+7. Let the agent write the first Issues, then work them one PR at a time.
 
 ## Repository map
 
 ```text
-.github/            Issue forms, PR template, Dependabot config
+.github/            Issue forms, PR template, Dependabot config, CI workflows
 docs/
   agents/           agent contract, autonomy policy, adapters
   architecture/     system architecture (filled per project)
   decisions/        ADRs
-  development/      contributor docs (environment, GitHub setup, labels)
+  development/      contributor docs (environment, CI, GitHub setup, labels)
   security/         threat model, secrets, supply-chain and MCP policies
+scripts/            repository checks (Markdown link checker)
 .claude/            Claude Code permissions and sandbox
 .devcontainer/      dev container: pinned image, egress firewall
 .env.example        names of the environment variables a project needs
+.markdownlint-cli2.yaml  Markdown style rules
 .mcp.json           MCP servers (empty; see the MCP policy)
-.pre-commit-config.yaml  gitleaks secret scan on every commit
+.pre-commit-config.yaml  checks on every commit and in CI (secrets, syntax, links)
 AGENTS.md           entry point for every agent
 CLAUDE.md           Claude Code adapter (imports AGENTS.md)
+Makefile            standard commands (make help)
 MASTER_PROMPT.md    prompt to bootstrap a new project
 SECURITY.md         vulnerability reporting and secret-exposure steps
 opencode.json       OpenCode permissions

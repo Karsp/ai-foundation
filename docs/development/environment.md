@@ -55,7 +55,7 @@ All from the Ubuntu archive, which is signed and versioned:
 
 ```bash
 sudo apt update
-sudo apt install -y git gh nodejs npm pipx bubblewrap socat ripgrep
+sudo apt install -y git gh make nodejs npm pipx bubblewrap socat ripgrep
 ```
 
 `bubblewrap`, `socat` and `ripgrep` are what Claude Code's sandbox runs on (`/sandbox` lists any that are missing). Check whether Ubuntu's AppArmor blocks bubblewrap:
@@ -120,10 +120,10 @@ The token stays in `gh`'s own storage. Agents are denied reading it, and the san
 mkdir -p ~/code && cd ~/code
 git clone https://github.com/<owner>/<repo>.git
 cd <repo>
-pre-commit install --install-hooks
+make setup
 ```
 
-Keep repositories under `~/code`, never under `/mnt/c`: it is faster, and the Windows drive is outside the agent's reach (step 5). `--install-hooks` builds the gitleaks hook now; inside the sandbox it couldn't download what it needs.
+Keep repositories under `~/code`, never under `/mnt/c`: it is faster, and the Windows drive is outside the agent's reach (step 5). `make setup` installs the Git hooks and builds them now; inside the sandbox they couldn't download what they need. `make help` lists the other commands ([CI and commands](ci-template.md)).
 
 ### 8. Check it works
 
@@ -154,7 +154,7 @@ Two things you may see, both expected:
 | Part | File | What it does |
 |---|---|---|
 | Base image | [`Dockerfile`](../../.devcontainer/Dockerfile) | Ubuntu 26.04, pinned by digest. Dependabot proposes digest updates weekly |
-| Tools | `Dockerfile` | Git, `gh`, Node.js 22, Go and pipx from the Ubuntu archive; the agents you choose (Claude Code, OpenCode) and pre-commit at exact versions; the gitleaks hook built in advance |
+| Tools | `Dockerfile` | Git, `gh`, `make`, Node.js 22, Go and pipx from the Ubuntu archive; the agents you choose (Claude Code, OpenCode) and pre-commit at exact versions; the pre-commit hooks built in advance |
 | Mounts | [`devcontainer.json`](../../.devcontainer/devcontainer.json) | Only the project folder, at `/workspace`. No home folder, `~/.ssh`, cloud credentials or Docker socket |
 | User | `Dockerfile` | `ubuntu` (uid 1000), not root. Its only `sudo` right is starting the firewall |
 | Firewall | [`init-firewall.sh`](../../.devcontainer/init-firewall.sh), [`firewall/`](../../.devcontainer/firewall/README.md) | Runs at every start. Blocks all outbound traffic except DNS, GitHub and the hosts in the lists you turn on (`base` plus, by default, `anthropic`); refuses wildcards; blocks IPv6. Needs the `NET_ADMIN` and `NET_RAW` capabilities |
@@ -167,7 +167,7 @@ Claude Code's sign-in is not kept in a volume: after a rebuild you sign in again
 1. Install [Docker Desktop](https://docs.docker.com/desktop/setup/install/windows-install/) with the WSL2 backend, VS Code, and the **Dev Containers** extension.
 2. Clone the repository inside WSL2 (Option A, steps 1 and 7) or let VS Code clone it into a container volume.
 3. In VS Code: **Dev Containers: Reopen in Container**. The first build takes several minutes. The terminal shows `Firewall ready` when the container is up.
-4. In the container terminal: `claude` and sign in (open the printed address in your browser). If the clone is new, also run `pre-commit install`. For `gh`, run `gh auth login` with a [fine-grained token](https://github.com/settings/personal-access-tokens/new) limited to this repository, with the permissions the task needs and an expiry of a few days.
+4. In the container terminal: `claude` and sign in (open the printed address in your browser). If the clone is new, also run `make setup`. For `gh`, run `gh auth login` with a [fine-grained token](https://github.com/settings/personal-access-tokens/new) limited to this repository, with the permissions the task needs and an expiry of a few days.
 
 VS Code shares your Git credentials with the container by default, so `git push` works there. Agents in the container can use them too, as in WSL2.
 

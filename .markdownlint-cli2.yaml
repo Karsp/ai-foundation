@@ -1,0 +1,12 @@
+# Markdown style rules (markdownlint-cli2, run by pre-commit).
+# Defaults, except the rules that fight how these docs are written.
+config:
+  default: true
+  MD001: false # long guides use "#" per numbered section and "###" inside it
+  MD013: false # line length: prose is one line per paragraph
+  MD024:
+    siblings_only: true # the same heading may repeat under different parents
+  MD025: false # long guides have one "#" heading per numbered section
+  MD033: false # inline HTML (for example <details>) is allowed
+  MD041: false # files may start with front matter or a badge
+  MD060: false # tables use the compact |---| style

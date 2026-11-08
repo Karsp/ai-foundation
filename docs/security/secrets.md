@@ -40,12 +40,12 @@ Never put a secret in: committed files, `.env.example`, Issues, PRs, commit mess
 sudo apt install pipx
 pipx install pre-commit==4.7.0
 
-# 2. in the repository folder (--install-hooks builds gitleaks now, so the
-#    hook also works inside Claude Code's sandbox, which blocks the download)
-pre-commit install --install-hooks
+# 2. in the repository folder: installs the hooks and builds them now, so
+#    they also work inside Claude Code's sandbox, which blocks the download
+make setup
 
-# 3. optional: scan every file once
-pre-commit run gitleaks --all-files
+# 3. optional: scan every commit in the history
+make security
 ```
 
 Installing the hooks takes a few minutes the first time: pre-commit builds gitleaks (it installs Go by itself if you don't have it). The same steps work on Linux and macOS. The full WSL2 setup is in the [environment guide](../development/environment.md); the dev container has the hook built in.
@@ -64,4 +64,12 @@ Installing the hooks takes a few minutes the first time: pre-commit builds gitle
 | Agent settings | Agents reading `.env` and credential folders, skipping hooks | [Adapters](../agents/adapters/README.md) |
 | gitleaks pre-commit | Secrets in any committed file | Local, every commit |
 | GitHub push protection | Known token formats on push | GitHub ([setup](../development/github-setup.md)) |
-| gitleaks in CI | Anything that skipped the hook | CI ([#14](https://github.com/Karsp/ai-foundation/issues/14)) |
+| gitleaks history scan | Anything that skipped the hook, even if a later commit removed it | `make security` and CI on every PR ([CI](../development/ci-template.md)) |
+
+## A secret in the history
+
+The history scan (`make security`, and CI on every pull request) checks every commit, so a secret that was committed once fails it even after a later commit removed the line. Deleting the line doesn't help: the value is still in the history and in every clone.
+
+1. Treat the secret as exposed: revoke or rotate it ([`SECURITY.md`](../../SECURITY.md#if-a-secret-is-exposed)).
+2. If the commit is only on your feature branch and was never pushed, rewrite that branch (`git rebase -i`, `git commit --amend`) so the secret is gone, then push.
+3. Otherwise, once the secret no longer works, copy the `Fingerprint:` line gitleaks printed into a `.gitleaksignore` file at the repository root, one per line, and say in the PR which secret it was and that it was rotated. Never add a fingerprint for a secret that still works.
