@@ -30,6 +30,7 @@ All in [`.pre-commit-config.yaml`](../../.pre-commit-config.yaml), each tool pin
 | Shell scripts | shellcheck | Quoting bugs and unsafe patterns |
 | Markdown style | markdownlint-cli2 ([rules](../../.markdownlint-cli2.yaml)) | Inconsistent headings, lists and code blocks |
 | Markdown links | [`scripts/check_links.py`](../../scripts/check_links.py) | Links to files or headings that don't exist. Web links aren't checked: they need the network and change outside the repository |
+| Skills and subagents | [`scripts/check_agents.py`](../../scripts/check_agents.py) | A reviewer subagent given tools that can write, run commands or reach the network; Claude Code and OpenCode copies of a subagent that differ; a skill that pre-approves tools ([skills and subagents](../agents/skills.md)) |
 
 CI is [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml): one job, **Checks**, that runs `make ci` on every pull request and every push to `main`. Mark it as a required check ([GitHub setup](github-setup.md)).
 

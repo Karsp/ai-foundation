@@ -13,6 +13,7 @@ A reusable, model-agnostic foundation for building software with AI agents **saf
 | Decisions each project must make | [`docs/PROJECT_ARCHITECTURE_GUIDE.md`](docs/PROJECT_ARCHITECTURE_GUIDE.md) |
 | Which files each agent reads, and the settings that enforce the rules | [`CLAUDE.md`](CLAUDE.md), [`.claude/settings.json`](.claude/settings.json), [`opencode.json`](opencode.json), [`docs/agents/adapters/`](docs/agents/adapters/README.md) |
 | How an agent works through an Issue | [`docs/agents/agent-contract.md`](docs/agents/agent-contract.md) |
+| Skills (new Issue, handoff, security review) and read-only reviewer subagents | [`docs/agents/skills.md`](docs/agents/skills.md), [`.claude/skills/`](.claude/skills/), [`.claude/agents/`](.claude/agents/), [`.opencode/agents/`](.opencode/agents/) |
 | What agents may do alone, with approval, or never | [`docs/agents/autonomy.md`](docs/agents/autonomy.md) |
 | Decision records | [`docs/decisions/`](docs/decisions/) |
 | Issue forms and PR template | [`.github/`](.github/) |
@@ -25,7 +26,7 @@ A reusable, model-agnostic foundation for building software with AI agents **saf
 | Where secrets live, and a scan that blocks them before a commit | [`docs/security/secrets.md`](docs/security/secrets.md), [`.pre-commit-config.yaml`](.pre-commit-config.yaml), [`.env.example`](.env.example) |
 | Standard commands (`make help`) and the checks CI runs on every PR, plus an example CI for apps | [`Makefile`](Makefile), [`.github/workflows/ci.yml`](.github/workflows/ci.yml), [`docs/development/ci-template.md`](docs/development/ci-template.md) |
 
-Coming next (see Issues): starter skills.
+Coming next (see Issues): a pilot project built from the template.
 
 ## Core rules in one minute
 
@@ -51,14 +52,15 @@ Coming next (see Issues): starter skills.
 ```text
 .github/            Issue forms, PR template, Dependabot config, CI workflows
 docs/
-  agents/           agent contract, autonomy policy, adapters
+  agents/           agent contract, autonomy policy, adapters, skills catalog
   architecture/     system architecture (filled per project)
   decisions/        ADRs
   development/      contributor docs (environment, CI, GitHub setup, labels)
   security/         threat model, secrets, supply-chain and MCP policies
-scripts/            repository checks (Markdown link checker)
-.claude/            Claude Code permissions and sandbox
+scripts/            repository checks (Markdown links, skills and subagents)
+.claude/            Claude Code permissions and sandbox, skills, subagents
 .devcontainer/      dev container: pinned image, egress firewall
+.opencode/          OpenCode subagents
 .env.example        names of the environment variables a project needs
 .markdownlint-cli2.yaml  Markdown style rules
 .mcp.json           MCP servers (empty; see the MCP policy)

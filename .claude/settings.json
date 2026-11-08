@@ -61,6 +61,7 @@
       "Edit(AGENTS.md)",
       "Edit(CLAUDE.md)",
       "Edit(.claude/**)",
+      "Edit(.opencode/**)",
       "Edit(opencode.json)",
       "Edit(.mcp.json)",
       "Edit(.github/workflows/**)",
