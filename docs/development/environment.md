@@ -143,7 +143,7 @@ If Claude asks to retry a failed command outside the sandbox, decline. More chec
 Two things you may see, both expected:
 
 - **`could not lock config file .git/config`.** Commands inside the sandbox can't change `.git/config` or `.git/hooks`, so for example deleting a branch leaves its config entry behind. Run those from your own terminal.
-- **Extra untracked entries in `git status`** (`.bashrc`, `.gitconfig`, `.idea`, `.gitmodules`, `.claude/skills` and similar) while Claude Code is running. They are empty placeholders the sandbox uses to stop anything from creating those files, and they disappear afterwards. Never commit them; `.gitignore` already hides the shell and Git config ones.
+- **Extra untracked entries in `git status`** (`.bashrc`, `.gitconfig`, `.idea`, `.gitmodules` and similar) while Claude Code is running. They are empty placeholders the sandbox uses to stop anything from creating those files, and they disappear afterwards. Never commit them; `.gitignore` already hides the shell and Git config ones.
 
 ## Option B: Dev container
 

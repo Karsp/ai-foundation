@@ -13,6 +13,8 @@ Adapters never repeat rule text. If a rule is missing, add it to `AGENTS.md` or 
 | GGA (pre-commit reviewer) | `AGENTS.md` (`RULES_FILE` in `.gga`) | none: it reviews, it doesn't act | none |
 | Any other agent | `AGENTS.md` | Add an adapter here before using it | Follow the [MCP policy](../../security/mcp-policy.md) |
 
+Skills and subagents are listed in [skills and subagents](../skills.md): Claude Code and OpenCode share the skills in `.claude/skills/`, and each has its own copy of the subagents (`.claude/agents/`, `.opencode/agents/`).
+
 Personal overrides go in files that are not committed (`.claude/settings.local.json`, user-level settings). They may tighten the project settings but should not loosen them.
 
 ## What the settings enforce
@@ -22,7 +24,7 @@ Personal overrides go in files that are not committed (`.claude/settings.local.j
 | Never read secrets (§5) | `deny` Read and Edit of `.env`, `.env.local`, `.env.*.local`, `.env.development`, `.env.production`, `.env.staging`, `.env.test`, `*.pem`, `*.key`, `~/.ssh`, `~/.aws`, `~/.config/gh`, `~/.gnupg`; the sandbox also hides these from shell commands | `read`/`edit` deny `*.env`, `*.env.*` (except `*.env.example`), `*.pem`, `*.key`; `external_directory` deny the same home folders; `bash` deny commands mentioning `.env` |
 | No destructive actions without approval (§5) | `deny` `git push --force`/`-f`, `rm -rf`, `sudo`, and bare `sh`/`bash`/`zsh` (blocks `curl … \| sh`) | `bash` deny the same patterns, including `* \| sh` and `* \| bash` |
 | Dependencies need approval ([supply chain](../../security/supply-chain.md)) | `ask` for `npm install/i/add/update`, `npx`, `pnpm add/install/update`, `yarn add`, `pip install`, `uv add`, `uv pip install`, `uvx`, `curl`, `wget` | `bash` ask by default; installs explicitly `ask` |
-| Agent rules and CI change only with approval (§5, §6) | `ask` before editing `AGENTS.md`, `CLAUDE.md`, `.claude/**`, `opencode.json`, `.mcp.json`, `.github/workflows/**`, `.devcontainer/**` | `edit` ask for the same files |
+| Agent rules and CI change only with approval (§5, §6) | `ask` before editing `AGENTS.md`, `CLAUDE.md`, `.claude/**` (settings, skills, subagents), `.opencode/**`, `opencode.json`, `.mcp.json`, `.github/workflows/**`, `.devcontainer/**` | `edit` ask for the same files |
 | Never skip the secret scan ([secrets](../../security/secrets.md)) | `deny` `git commit --no-verify`/`-n` and `git push --no-verify` | `bash` deny the same patterns |
 | Run isolated ([ADR-0004](../../decisions/ADR-0004-agents-run-in-isolated-environment.md)) | `sandbox.enabled` with `failIfUnavailable`: Claude Code refuses to start without a working sandbox; `allowUnsandboxedCommands: false`; network limited to GitHub, npm and PyPI; in the dev container the container is the boundary instead ([environment](../../development/environment.md)) | No built-in sandbox: run OpenCode in the [dev container](../../development/environment.md#option-b-dev-container) |
 | MCP servers only from the approved list ([MCP policy](../../security/mcp-policy.md)) | `enableAllProjectMcpServers: false`: each server in `.mcp.json` needs approval | Servers only in `opencode.json` → `mcp`, through a PR |

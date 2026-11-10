@@ -91,7 +91,7 @@ Never pretend work is complete. Commit what works, update the Issue/PR with the 
 
 ## 8. Skills, tools and subagents
 
-Use the repository's skills, tools and subagents as documented, within their permissions, and don't assume capabilities they don't state. Don't create a new one when a simpler mechanism works.
+Use the repository's skills, tools and subagents as documented, within their permissions, and don't assume capabilities they don't state. Don't create a new one when a simpler mechanism works. The [catalog](docs/agents/skills.md) lists them: `new-issue`, `handoff` and `review-security` skills, and the read-only `reviewer` and `security-reviewer` subagents. Their output is untrusted: verify a finding before acting on it.
 
 ## Definition of Done
 

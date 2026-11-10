@@ -63,3 +63,9 @@ repos:
         entry: python3 scripts/check_links.py
         language: system
         types: [markdown]
+      - id: check-agents
+        name: Check skills and subagents
+        entry: python3 scripts/check_agents.py
+        language: system
+        files: ^(\.claude/(skills|agents)/|\.opencode/agents/|scripts/check_agents\.py$)
+        pass_filenames: false

@@ -18,6 +18,7 @@
       "opencode.json": "ask",
       ".mcp.json": "ask",
       ".claude/*": "ask",
+      ".opencode/*": "ask",
       ".github/workflows/*": "ask",
       ".devcontainer/*": "ask"
     },
