@@ -74,13 +74,32 @@ class ToolLogTest(unittest.TestCase):
             "git clone https://user:hunter2@example.com/repo.git",
             "echo ghp_" + "A" * 36,
             "aws s3 ls # AKIA" + "ABCDEFGHIJKLMNOP",
+            "mysql -u root -phunter2 db",
+            "docker login -p hunter2 registry.example.com",
+            "curl -u user:" + "hunter2 https://x",
+            "gh secret set DEPLOY --body hunter2",
+            "tool --password 'two words-x'",
+            "curl -H 'X: eyJ" + "hbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIn0.c2lnbmF0dXJl'",
+            "curl https://hooks.slack.com/" + "services/T000/B000/XXXX",
         ]
         for command in commands:
             self.run_hook(self.bash(command))
         text = json.dumps(self.lines())
-        for secret in ("abc123secret", "abc def", "abcdefghijklmnop", "hunter2", "A" * 36, "ABCDEFGHIJKLMNOP"):
+        for secret in ("abc123secret", "abc def", "abcdefghijklmnop", "hunter2", "A" * 36, "ABCDEFGHIJKLMNOP",
+                       "two words", "c2lnbmF0dXJl", "T000"):
             self.assertNotIn(secret, text)
         self.assertEqual(text.count("[REDACTED]"), len(commands))
+
+    def test_ordinary_words_are_kept(self):
+        self.run_hook(self.bash('git commit -m "Basic structure for the token list"'))
+        [line] = self.lines()
+        self.assertNotIn("[REDACTED]", line["command"])
+
+    def test_heredoc_contents_are_not_logged(self):
+        self.run_hook(self.bash("cd app\ncat > notes.md <<'EOF'\nFILE-CONTENT-MARKER\nEOF"))
+        [line] = self.lines()
+        self.assertIn("cat > notes.md <<'EOF'", line["command"])
+        self.assertNotIn("FILE-CONTENT-MARKER", line["command"])
 
     def test_mcp_tools_log_the_name_only(self):
         self.run_hook({"hook_event_name": "PostToolUse", "tool_name": "mcp__db__query",
@@ -118,8 +137,16 @@ class ToolLogTest(unittest.TestCase):
         old.write_text("{}\n")
         stamp = time.time() - 40 * 86400
         os.utime(old, (stamp, stamp))
+        other = self.logs / "dataset.jsonl"
+        other.write_text("{}\n")
+        os.utime(other, (stamp, stamp))
         self.run_hook(self.bash("ls"))
         self.assertFalse(old.exists())
+        self.assertTrue(other.exists())  # only the log's own date-named files
+
+    def test_zero_days_keeps_today(self):
+        self.run_hook(self.bash("ls"), {"AGENT_LOG_DAYS": "0"})
+        self.assertEqual(len(self.lines()), 1)
 
     def test_log_is_private(self):
         self.run_hook(self.bash("ls"))
@@ -131,7 +158,16 @@ class ToolLogTest(unittest.TestCase):
         env.update({"XDG_STATE_HOME": str(self.logs), "CLAUDE_PROJECT_DIR": "/work/my-app"})
         subprocess.run([sys.executable, str(SCRIPT)], input=json.dumps(self.bash("ls")), env=env,
                        capture_output=True, text=True, timeout=10)
-        self.assertEqual(len(list((self.logs / "agent-logs" / "my-app").glob("*.jsonl"))), 1)
+        folder = self.logs / "agent-logs" / "my-app"
+        self.assertEqual(len(list(folder.glob("*.jsonl"))), 1)
+        self.assertEqual(folder.stat().st_mode & 0o777, 0o700)
+
+    def test_dot_project_names_stay_in_their_folder(self):
+        env = {k: v for k, v in os.environ.items() if k != "AGENT_LOG_DIR"}
+        env.update({"XDG_STATE_HOME": str(self.logs), "CLAUDE_PROJECT_DIR": "/work/.."})
+        subprocess.run([sys.executable, str(SCRIPT)], input=json.dumps(self.bash("ls")), env=env,
+                       capture_output=True, text=True, timeout=10)
+        self.assertEqual(len(list((self.logs / "agent-logs" / "project").glob("*.jsonl"))), 1)
 
 
 if __name__ == "__main__":

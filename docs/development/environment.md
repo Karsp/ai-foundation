@@ -140,9 +140,10 @@ Run `claude` in the repository. It must start without "sandbox required but unav
 
 If Claude asks to retry a failed command outside the sandbox, decline. More checks are in the [adapters guide](../agents/adapters/README.md#checking-the-adapters).
 
-Two things you may see, both expected:
+Three things you may see, all expected:
 
 - **`could not lock config file .git/config`.** Commands inside the sandbox can't change `.git/config` or `.git/hooks`, so for example deleting a branch leaves its config entry behind. Run those from your own terminal.
+- **`unable to unlink old` or `Read-only file system` during `git checkout` or `git merge`.** Commands inside the sandbox can't write `.claude/` settings, skills, agents and hooks, `.opencode/` or `opencode.json`, so switching to a branch that changes them fails. Run that command from your own terminal.
 - **Extra untracked entries in `git status`** (`.bashrc`, `.gitconfig`, `.idea`, `.gitmodules` and similar) while Claude Code is running. They are empty placeholders the sandbox uses to stop anything from creating those files, and they disappear afterwards. Never commit them; `.gitignore` already hides the shell and Git config ones.
 
 ## Option B: Dev container

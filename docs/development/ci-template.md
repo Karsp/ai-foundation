@@ -13,7 +13,7 @@ Run `make help` for the list. Agents use these commands and don't invent others 
 | `make format` | Fixes what can be fixed automatically: final newlines, trailing spaces |
 | `make links` | Relative links and headings in Markdown |
 | `make security` | Scans every commit in the Git history for secrets |
-| `make test` | The tests. This template has none; projects put their test command here |
+| `make test` | The tests: the template's own (the [tool log](../agents/tool-log.md)); projects add theirs here |
 | `make ci` | `lint`, `security` and `test`: exactly what CI runs |
 
 ## What this repository checks

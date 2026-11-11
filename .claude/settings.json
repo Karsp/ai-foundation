@@ -75,7 +75,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/log_tool_use.py\"",
+            "command": "python3 -I \"$CLAUDE_PROJECT_DIR/.claude/hooks/log_tool_use.py\"",
             "timeout": 10
           }
         ]
@@ -87,7 +87,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/log_tool_use.py\"",
+            "command": "python3 -I \"$CLAUDE_PROJECT_DIR/.claude/hooks/log_tool_use.py\"",
             "timeout": 10
           }
         ]
@@ -99,7 +99,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/log_tool_use.py\"",
+            "command": "python3 -I \"$CLAUDE_PROJECT_DIR/.claude/hooks/log_tool_use.py\"",
             "timeout": 10
           }
         ]
@@ -120,6 +120,10 @@
       "gh *"
     ],
     "filesystem": {
+      "denyWrite": [
+        "./.opencode",
+        "./opencode.json"
+      ],
       "denyRead": [
         "~/.ssh",
         "~/.aws",

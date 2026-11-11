@@ -25,6 +25,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 MAX_TEXT = 1000
+LOG_NAME = re.compile(r"^\d{4}-\d\d-\d\d\.jsonl$")
 EVENTS = {"PreToolUse": "requested", "PostToolUse": "ran", "PostToolUseFailure": "failed"}
 
 # What each tool was pointed at. Claude Code and OpenCode names.
@@ -50,22 +51,40 @@ REDACTIONS = [
     # NAME=value and NAME: value where the name looks sensitive ("Authorization: Bearer x" keeps "Bearer")
     (re.compile(rf"\b({SENSITIVE_NAME})(\s*[=:]\s*)((?:Bearer|Basic|Token)\s+)?(\"[^\"]*\"|'[^']*'|[^\s'\"]+)", re.I),
      r"\1\2\3[REDACTED]"),
-    # --password value, --token=value
-    (re.compile(r"(--?(?:password|passwd|pass|token|secret|api-?key|auth)[= ])(\S+)", re.I), r"\1[REDACTED]"),
-    # Authorization headers
-    (re.compile(r"\b(Bearer|Basic|token)\s+[A-Za-z0-9._~+/=-]{8,}", re.I), r"\1 [REDACTED]"),
+    # --password value, --token=value, --body value (gh secret set; also hides PR and Issue bodies)
+    (re.compile(r"(--?(?:password|passwd|pass|token|secret|api-?key|auth|body)[= ]\s*)(\"[^\"]*\"|'[^']*'|\S+)", re.I),
+     r"\1[REDACTED]"),
+    # mysql -pX, docker login -p X, sshpass -p X
+    (re.compile(r"(\b(?:mysql\w*|mariadb)\b[^\n|;&]*?\s-p)(?=\S)(\S+)"), r"\1[REDACTED]"),
+    (re.compile(r"(\b(?:docker login|podman login|sshpass)\b[^\n|;&]*?\s-p\s+)(\S+)"), r"\1[REDACTED]"),
+    # curl -u user:password
+    (re.compile(r"(\s(?:-u|--user)[= ]\s*[^\s:]+:)(\S+)"), r"\1[REDACTED]"),
+    # Authorization headers: a value with a digit, or a long one, so "Basic structure" stays
+    (re.compile(r"\b(Bearer|Basic|token)\s+(?:(?=[A-Za-z._~+/=-]*\d)[A-Za-z0-9._~+/=-]{8,}|[A-Za-z0-9._~+/=-]{20,})", re.I),
+     r"\1 [REDACTED]"),
     # user:password@ in URLs
     (re.compile(r"(://[^/\s:@]+:)[^@\s]+@"), r"\1[REDACTED]@"),
     # Well-known token formats
     (re.compile(r"\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|glpat-[A-Za-z0-9_-]{20,}"
-                r"|xox[abprs]-[A-Za-z0-9-]{10,}|sk-[A-Za-z0-9_-]{20,}|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{35})\b"),
+                r"|xox[abprs]-[A-Za-z0-9-]{10,}|sk-[A-Za-z0-9_-]{20,}|[sr]k_(?:live|test)_[A-Za-z0-9]{16,}|npm_[A-Za-z0-9]{36}"
+                r"|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{35}|eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]+)\b"),
      "[REDACTED]"),
+    # Webhook URLs that are themselves the secret
+    (re.compile(r"https://hooks\.slack\.com/services/\S+"), "[REDACTED]"),
     # Private key blocks
     (re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----.*?(-----END [A-Z ]*PRIVATE KEY-----|$)", re.S), "[REDACTED]"),
 ]
 
 
+HEREDOC = re.compile(r"<<-?\s*['\"]?\w+")
+
+
 def redact(text: str) -> str:
+    # A heredoc carries file contents: keep the command up to the line that starts it
+    heredoc = HEREDOC.search(text)
+    end = text.find("\n", heredoc.end()) if heredoc else -1
+    if end != -1:
+        text = f"{text[:end]}\n... [heredoc, {len(text) - end - 1} characters not logged]"
     for pattern, replacement in REDACTIONS:
         text = pattern.sub(replacement, text)
     if len(text) > MAX_TEXT:
@@ -91,20 +110,27 @@ def target(tool: str, tool_input: dict) -> dict:
 def log_dir(project: str) -> Path:
     configured = os.environ.get("AGENT_LOG_DIR")
     if configured:
-        return Path(configured).expanduser()
+        directory = Path(configured).expanduser()
+        directory.mkdir(mode=0o700, parents=True, exist_ok=True)
+        return directory
     state = os.environ.get("XDG_STATE_HOME") or str(Path.home() / ".local" / "state")
-    name = re.sub(r"[^A-Za-z0-9._-]", "_", Path(project).name or "project")
-    return Path(state) / "agent-logs" / name
+    name = re.sub(r"[^A-Za-z0-9._-]", "_", Path(project).name)
+    if name.strip(".") == "":
+        name = "project"
+    directory = Path(state) / "agent-logs" / name
+    directory.mkdir(mode=0o700, parents=True, exist_ok=True)
+    directory.chmod(0o700)  # our own folder: keep it private even if it existed
+    return directory
 
 
 def prune(directory: Path) -> None:
     try:
-        days = int(os.environ.get("AGENT_LOG_DAYS", "30"))
+        days = max(1, int(os.environ.get("AGENT_LOG_DAYS", "30")))
     except ValueError:
         days = 30
     cutoff = time.time() - days * 86400
-    for old in directory.glob("*.jsonl"):
-        if old.stat().st_mtime < cutoff:
+    for old in directory.glob("*.jsonl"):  # only the logger's own files
+        if LOG_NAME.match(old.name) and old.is_file() and not old.is_symlink() and old.stat().st_mtime < cutoff:
             old.unlink()
 
 
@@ -127,13 +153,12 @@ def main() -> None:
         **target(tool, event.get("tool_input") or {}),
     }
     directory = log_dir(project)
-    directory.mkdir(mode=0o700, parents=True, exist_ok=True)
     path = directory / f"{now:%Y-%m-%d}.jsonl"
     new = not path.exists()
-    with open(path, "a", encoding="utf-8") as log:
+    fd = os.open(path, os.O_WRONLY | os.O_APPEND | os.O_CREAT | os.O_NOFOLLOW, 0o600)
+    with os.fdopen(fd, "a", encoding="utf-8") as log:
         log.write(json.dumps({k: v for k, v in line.items() if v != ""}) + "\n")
     if new:
-        path.chmod(0o600)
         prune(directory)
 
 

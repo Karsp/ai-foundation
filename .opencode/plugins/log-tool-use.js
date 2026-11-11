@@ -11,7 +11,7 @@ export const LogToolUse = async ({ directory, worktree }) => {
 
   const log = (event, input, args) => {
     try {
-      const child = spawn("python3", [script], {
+      const child = spawn("python3", ["-I", script], {
         env: { ...process.env, CLAUDE_PROJECT_DIR: root },
         stdio: ["pipe", "ignore", "ignore"],
       })
