@@ -27,7 +27,7 @@ links: ## Check relative links and headings in Markdown
 security: ## Scan every commit in the Git history for secrets
 	$(PRE_COMMIT) run gitleaks-history --hook-stage manual --all-files
 
-test: ## Run the tests (this template has none; projects add theirs here)
-	@echo "No tests in this template. Projects: replace this with the test command."
+test: ## Run the tests (the template's own tools; projects add theirs here)
+	python3 -m unittest discover -s tests
 
 ci: lint security test ## What CI runs on every pull request
