@@ -52,7 +52,7 @@ Use the commands documented here; do not invent alternative workflows. Run the r
 | `make lint` | After changing files: every style, syntax, workflow and link check |
 | `make format` | To fix final newlines and trailing spaces automatically |
 | `make security` | Before a PR: scans the whole Git history for secrets |
-| `make test` | After changing code (this template has no tests) |
+| `make test` | After changing code: runs the tests |
 | `make ci` | Before declaring work complete: exactly what CI runs on the PR |
 
 Projects created from the template keep these names and fill in their stack: dependency install in `setup`, tests in `test`, dependency audit in `security`, and `build` or `typecheck` targets where needed ([CI guide](docs/development/ci-template.md)).

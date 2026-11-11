@@ -13,7 +13,7 @@ Run `make help` for the list. Agents use these commands and don't invent others 
 | `make format` | Fixes what can be fixed automatically: final newlines, trailing spaces |
 | `make links` | Relative links and headings in Markdown |
 | `make security` | Scans every commit in the Git history for secrets |
-| `make test` | The tests. This template has none; projects put their test command here |
+| `make test` | The tests: the template's own (the [tool log](../agents/tool-log.md)); projects add theirs here |
 | `make ci` | `lint`, `security` and `test`: exactly what CI runs |
 
 ## What this repository checks
@@ -60,7 +60,7 @@ These keep a pull request, or a compromised Action, from reaching your secrets o
 Then fill in the `Makefile`:
 
 1. **`setup`:** add the dependency install from the lockfile (`npm ci`, `uv sync --locked`).
-2. **`test`:** replace the stub with your test command. Never make it pass by skipping tests.
+2. **`test`:** add your test command next to the template's own (`python3 -m unittest discover -s tests`, which tests the [tool log](../agents/tool-log.md)). Never make it pass by skipping tests.
 3. **`security`:** add your dependency audit after the secret scan, for example `npm audit --audit-level=moderate` or `uv run pip-audit` (a new tool needs the supply-chain checks first).
 4. **`lint`, `typecheck`, `build`:** add your linter, formatter and type checker as pre-commit hooks so they run on commit too, or as `make` targets that `ci` depends on.
 5. Keep the target names: agents and CI rely on them.
