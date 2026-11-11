@@ -60,7 +60,7 @@ lsb_release -d     # Ubuntu 26.04
 node --version     # v20 or newer (26.04 has v22)
 ```
 
-The Markdown check needs Node 20 or newer. An older Ubuntu, such as 24.04 with Node 18, passes `make setup` but fails `make ci` with `Invalid regular expression flags`. Upgrade it in place with `sudo do-release-upgrade`, then run `wsl --shutdown` in PowerShell and reopen Ubuntu. If you already ran `make setup`, run `pre-commit clean` and `make setup` again, so the checks are rebuilt with the new Node.
+The Markdown check needs Node 20 or newer. An older Ubuntu, such as 24.04 with Node 18, passes `make setup` but fails `make ci` with `Invalid regular expression flags`. Upgrade it in place with `sudo do-release-upgrade`, then run `wsl --shutdown` in PowerShell and reopen Ubuntu. If pre-commit was already installed, the upgrade's newer Python breaks it (`No module named 'pre_commit'`): run `pipx reinstall-all`. If you already ran `make setup`, run `pre-commit clean` and `make setup` again, so the checks are rebuilt with the new Node.
 
 `bubblewrap`, `socat` and `ripgrep` are what Claude Code's sandbox runs on (`/sandbox` lists any that are missing). Check whether Ubuntu's AppArmor blocks bubblewrap:
 
