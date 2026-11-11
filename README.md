@@ -13,6 +13,7 @@ A reusable, model-agnostic foundation for building software with AI agents **saf
 | Decisions each project must make | [`docs/PROJECT_ARCHITECTURE_GUIDE.md`](docs/PROJECT_ARCHITECTURE_GUIDE.md) |
 | Which files each agent reads, and the settings that enforce the rules | [`CLAUDE.md`](CLAUDE.md), [`.claude/settings.json`](.claude/settings.json), [`opencode.json`](opencode.json), [`docs/agents/adapters/`](docs/agents/adapters/README.md) |
 | How an agent works through an Issue | [`docs/agents/agent-contract.md`](docs/agents/agent-contract.md) |
+| What agents ran: the local tool log | [`docs/agents/tool-log.md`](docs/agents/tool-log.md), [`.claude/hooks/`](.claude/hooks/), [`.opencode/plugins/`](.opencode/plugins/) |
 | Skills (new Issue, handoff, security review) and read-only reviewer subagents | [`docs/agents/skills.md`](docs/agents/skills.md), [`.claude/skills/`](.claude/skills/), [`.claude/agents/`](.claude/agents/), [`.opencode/agents/`](.opencode/agents/) |
 | What agents may do alone, with approval, or never | [`docs/agents/autonomy.md`](docs/agents/autonomy.md) |
 | Decision records | [`docs/decisions/`](docs/decisions/) |

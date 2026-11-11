@@ -13,6 +13,8 @@ Adapters never repeat rule text. If a rule is missing, add it to `AGENTS.md` or 
 | GGA (pre-commit reviewer) | `AGENTS.md` (`RULES_FILE` in `.gga`) | none: it reviews, it doesn't act | none |
 | Any other agent | `AGENTS.md` | Add an adapter here before using it | Follow the [MCP policy](../../security/mcp-policy.md) |
 
+Both agents write every tool call to the same local log, outside the repository: `~/.local/state/agent-logs/<project>/`, kept 30 days ([tool log](../tool-log.md)). Claude Code does it with hooks in `.claude/settings.json`, OpenCode with the plugin in `.opencode/plugins/`.
+
 Skills and subagents are listed in [skills and subagents](../skills.md): Claude Code and OpenCode share the skills in `.claude/skills/`, and each has its own copy of the subagents (`.claude/agents/`, `.opencode/agents/`).
 
 Personal overrides go in files that are not committed (`.claude/settings.local.json`, user-level settings). They may tighten the project settings but should not loosen them.
@@ -29,6 +31,7 @@ Personal overrides go in files that are not committed (`.claude/settings.local.j
 | Run isolated ([ADR-0004](../../decisions/ADR-0004-agents-run-in-isolated-environment.md)) | `sandbox.enabled` with `failIfUnavailable`: Claude Code refuses to start without a working sandbox; `allowUnsandboxedCommands: false`; network limited to GitHub, npm and PyPI; in the dev container the container is the boundary instead ([environment](../../development/environment.md)) | No built-in sandbox: run OpenCode in the [dev container](../../development/environment.md#option-b-dev-container) |
 | MCP servers only from the approved list ([MCP policy](../../security/mcp-policy.md)) | `enableAllProjectMcpServers: false`: each server in `.mcp.json` needs approval | Servers only in `opencode.json` → `mcp`, through a PR |
 | No bypass | `disableBypassPermissionsMode: "disable"` | n/a |
+| A record of what agents ran (ASI10) | `PreToolUse`, `PostToolUse`, `PostToolUseFailure` hooks run [`.claude/hooks/log_tool_use.py`](../../../.claude/hooks/log_tool_use.py) | Plugin [`.opencode/plugins/log-tool-use.js`](../../../.opencode/plugins/log-tool-use.js) passes each call to the same script |
 
 ## Known limits
 
@@ -55,6 +58,7 @@ Run these in a throwaway folder with a fake `.env` (for example `API_KEY=fake`),
 | Start Claude Code where `bubblewrap` is missing | "sandbox required but unavailable … refusing to start" |
 | Ask it to run `git fetch` in WSL2 | Works: it runs outside the sandbox with your credentials |
 | Run `opencode debug config` | The `permission` block appears as written |
+| Ask Claude Code to run `ls`, then read the newest file in `~/.local/state/agent-logs/<project>/` | A `requested` and a `ran` line with `"command": "ls"` and no output ([tool log](../tool-log.md)) |
 | Run `opencode debug agent build` | The `permission` list has `bash` entries (for example `bash rm -rf * deny`). Rules under any other key for commands are silently ignored |
 
 Re-run them after upgrading Claude Code or OpenCode, and validate `.claude/settings.json` against the [Claude Code settings schema](https://json.schemastore.org/claude-code-settings.json).

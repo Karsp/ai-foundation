@@ -47,4 +47,4 @@ Approving this table is approving the PR that changes it.
 
 ## Configuration
 
-The template ships an empty [`.mcp.json`](../../.mcp.json) (`{"mcpServers": {}}`). JSON has no comments, so this document is where the rules live. A project adds servers there only through the steps above. Claude Code does not auto-enable servers from `.mcp.json` (`enableAllProjectMcpServers: false`), and OpenCode only loads servers listed in `opencode.json`; see the [agent adapters](../agents/adapters/README.md). Logging tool calls is [#29](https://github.com/Karsp/ai-foundation/issues/29).
+The template ships an empty [`.mcp.json`](../../.mcp.json) (`{"mcpServers": {}}`). JSON has no comments, so this document is where the rules live. A project adds servers there only through the steps above. Claude Code does not auto-enable servers from `.mcp.json` (`enableAllProjectMcpServers: false`), and OpenCode only loads servers listed in `opencode.json`; see the [agent adapters](../agents/adapters/README.md). MCP tool calls are logged by name only, without their arguments ([tool log](../agents/tool-log.md)).

@@ -27,5 +27,8 @@ Thumbs.db
 /.gitconfig
 /.ripgreprc
 
-# Python bytecode (scripts/)
+# Agent tool log, if AGENT_LOG_DIR points inside the project (docs/agents/tool-log.md)
+/.agent-logs/
+
+# Python bytecode (scripts/, tests/)
 __pycache__/
