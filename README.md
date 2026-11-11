@@ -4,6 +4,17 @@ A reusable, model-agnostic foundation for building software with AI agents **saf
 
 > **Status:** in progress towards v1.0. See the [roadmap Issues](https://github.com/Karsp/ai-foundation/issues) and the [v1.0 milestone](https://github.com/Karsp/ai-foundation/milestone/1).
 
+## How it fits together
+
+![Four stacked layers: 1 Constitution, 2 Agent rules, 3 Security, 4 Enforcement, and below them an app created from the template](docs/architecture/layers.png)
+
+1. **Constitution**: how we think, plan and document. [`MASTER_PROMPT.md`](MASTER_PROMPT.md), the [architecture guide](docs/PROJECT_ARCHITECTURE_GUIDE.md) and the [ADRs](docs/decisions/).
+2. **Agent rules**: what agents may do alone and what needs approval. [`AGENTS.md`](AGENTS.md), the [agent contract](docs/agents/agent-contract.md), the [autonomy levels](docs/agents/autonomy.md), [skills and reviewers](docs/agents/skills.md).
+3. **Security**: outside content is data, never instructions. The [Rule of Two](AGENTS.md#5-security), [supply chain](docs/security/supply-chain.md), [MCP](docs/security/mcp-policy.md) and [secrets](docs/security/secrets.md) policies, and a [threat model](docs/security/threat-model.md) based on the OWASP Top 10 for agentic applications.
+4. **Enforcement**: the rules are checked by tools, not only written down. [Issue and PR templates](.github/), [CI](docs/development/ci-template.md) and [pre-commit](.pre-commit-config.yaml) checks, agent permissions with a [sandbox or dev container](docs/development/environment.md), and a [log of every agent tool call](docs/agents/tool-log.md).
+
+Each project is created from the template and gets all four layers. FinTrack is the first ([#16](https://github.com/Karsp/ai-foundation/issues/16)).
+
 ## What you get
 
 | Area | Files |
