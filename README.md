@@ -2,7 +2,7 @@
 
 A reusable, model-agnostic foundation for building software with AI agents **safely**. It gives every new project the same engineering rules, agent permissions and security layer, so humans and agents (Claude Code, OpenCode, Codex and others) work the same way from day one.
 
-> **Status:** in progress towards v1.0. See the [roadmap Issues](https://github.com/Karsp/ai-foundation/issues) and the [v1.0 milestone](https://github.com/Karsp/ai-foundation/milestone/1).
+> **Status:** v1.0 released on 20 Nov 2026 ([release notes](https://github.com/Karsp/ai-foundation/releases/tag/v1.0)), proven by building a real app with it. Next: the [v1.1 milestone](https://github.com/Karsp/ai-foundation/milestone/2), with the lessons from that pilot.
 
 ## How it fits together
 
